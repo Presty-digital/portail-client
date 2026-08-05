@@ -1,10 +1,4 @@
-import { NextResponse } from 'next/server';
-import { authProfile, loadState, saveState } from '@/lib/server';
-import { scopedState } from '@/lib/state';
-export async function GET(req){try{const p=await authProfile(req);if(!p)return NextResponse.json({error:'Non autorisé'},{status:401});const s=await loadState();return NextResponse.json({profile:p,state:scopedState(s,p)});}catch(e){return NextResponse.json({error:e.message},{status:500});}}
-export async function PUT(req){try{const p=await authProfile(req);if(!p)return NextResponse.json({error:'Non autorisé'},{status:401});const body=await req.json();const current=await loadState();if(p.role==='agency_admin')return NextResponse.json({state:await saveState(body.state)});
-const id=p.institut_id;const incoming=body.state||{};const next={...current,
- leads:[...current.leads.filter(x=>x.institutId!==id),...(incoming.leads||[]).filter(x=>x.institutId===id)],
-};
-return NextResponse.json({state:scopedState(await saveState(next),p)});
-}catch(e){return NextResponse.json({error:e.message},{status:500});}}
+import {NextResponse} from "next/server";import {loadState,saveState} from "@/lib/db";import {getSession,visibleState} from "@/lib/session";import {migrate} from "@/lib/state";
+export const dynamic="force-dynamic";
+export async function GET(){try{const sess=await getSession();if(!sess)return NextResponse.json({error:"Non autorisé"},{status:401});const s=await loadState();return NextResponse.json({state:visibleState(s,sess)},{headers:{"Cache-Control":"no-store"}})}catch(e){return NextResponse.json({error:e.message},{status:500})}}
+export async function PUT(req){try{const sess=await getSession();if(!sess)return NextResponse.json({error:"Non autorisé"},{status:401});const incoming=migrate((await req.json()).state);const current=await loadState();if(sess.role==="agency_admin"){incoming.users=current.users;await saveState(incoming)}else{const iid=sess.institutId;const merged={...current,leads:[...current.leads.filter(x=>x.institutId!==iid),...incoming.leads.filter(x=>x.institutId===iid)]};await saveState(merged)}return NextResponse.json({ok:true})}catch(e){return NextResponse.json({error:e.message},{status:500})}}

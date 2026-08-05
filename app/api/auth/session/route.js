@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import {getSession} from "@/lib/session";import {loadState} from "@/lib/db";
+export async function GET(){const sess=await getSession();if(!sess)return NextResponse.json({user:null});try{const s=await loadState();const u=s.users.find(x=>x.id===sess.userId&&x.active!==false);return NextResponse.json({user:u?{id:u.id,name:u.name,email:u.email,role:u.role,institutId:u.institutId}:null})}catch(e){return NextResponse.json({error:e.message},{status:500})}}

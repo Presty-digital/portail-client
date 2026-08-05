@@ -1,25 +1,4 @@
-import { adminSupabase } from '@/lib/supabase';
-import { apiError } from '@/lib/server';
-
-export async function GET() {
-  try {
-    const supabase = adminSupabase();
-    const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
-    if (error) throw error;
-    return Response.json({ initialized: data.users.some(u => u.user_metadata?.role === 'agency_admin') });
-  } catch (e) { return apiError(e); }
-}
-
-export async function POST(req) {
-  try {
-    const supabase = adminSupabase();
-    const { data: listed, error: listError } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
-    if (listError) throw listError;
-    if (listed.users.some(u => u.user_metadata?.role === 'agency_admin')) return Response.json({ error: 'Administrateur déjà créé' }, { status: 409 });
-    const { name, email, password } = await req.json();
-    if (!email || !password || password.length < 8) return Response.json({ error: 'Email et mot de passe de 8 caractères minimum requis.' }, { status: 400 });
-    const { data, error } = await supabase.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { role: 'agency_admin', name: name || 'Administrateur Presty' } });
-    if (error) throw error;
-    return Response.json({ ok: true, userId: data.user.id });
-  } catch (e) { return apiError(e); }
-}
+import {NextResponse} from "next/server";import {loadState,saveState} from "@/lib/db";import {hashPassword,signSession,cookieName} from "@/lib/security";import {uid} from "@/lib/state";
+export const dynamic="force-dynamic";
+export async function GET(){try{const s=await loadState();return NextResponse.json({initialized:!!s.initialized})}catch(e){return NextResponse.json({error:e.message},{status:500})}}
+export async function POST(req){try{const s=await loadState();if(s.initialized)return NextResponse.json({error:"Application déjà initialisée"},{status:409});const b=await req.json();if(!b.email||!b.password||b.password.length<8)return NextResponse.json({error:"Email et mot de passe de 8 caractères minimum requis"},{status:400});const user={id:uid(),name:b.name||"Administrateur Presty",email:b.email.toLowerCase(),passwordHash:hashPassword(b.password),role:"agency_admin",institutId:null,active:true,createdAt:new Date().toISOString()};await saveState({...s,initialized:true,users:[user]});const res=NextResponse.json({ok:true,user:{id:user.id,name:user.name,email:user.email,role:user.role}});res.cookies.set(cookieName(),signSession({userId:user.id,role:user.role,institutId:null,exp:Date.now()+7*86400000}),{httpOnly:true,secure:true,sameSite:"lax",path:"/",maxAge:604800});return res}catch(e){return NextResponse.json({error:e.message},{status:500})}}
