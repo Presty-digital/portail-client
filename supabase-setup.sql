@@ -1,16 +1,14 @@
--- Initialisation unique et non destructive du Portail Presty.
-create table if not exists public.app_state (
+-- Initialisation unique. Ce script ne supprime ni n'écrase aucune donnée.
+create table if not exists public.presty_app_state (
   id text primary key,
   payload jsonb not null default '{}'::jsonb,
+  version integer not null default 3,
   updated_at timestamptz not null default now()
 );
 
-alter table public.app_state enable row level security;
-
--- Aucun accès direct depuis le navigateur : toutes les lectures/écritures passent
--- par les routes API serveur avec la service_role key.
-revoke all on public.app_state from anon, authenticated;
-
-insert into public.app_state (id, payload)
-values ('presty-global', '{"version":3,"instituts":[],"leads":[],"expenses":[],"campaigns":[],"reviews":[]}'::jsonb)
+insert into public.presty_app_state (id, payload, version)
+values ('main', '{}'::jsonb, 3)
 on conflict (id) do nothing;
+
+alter table public.presty_app_state enable row level security;
+-- Aucune policy navigateur : toutes les lectures/écritures passent par les routes serveur sécurisées.
