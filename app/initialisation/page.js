@@ -1,6 +1,2 @@
-'use client';
-import { useEffect,useState } from 'react'; import { useRouter } from 'next/navigation'; import Brand from '@/components/Brand';
-export default function Init(){const [name,setName]=useState('Dylan');const [email,setEmail]=useState('');const [password,setPassword]=useState('');const [error,setError]=useState('');const router=useRouter();
-useEffect(()=>{fetch('/api/setup').then(r=>r.json()).then(j=>{if(j.initialized) router.replace('/login')})},[router]);
-async function submit(e){e.preventDefault();setError('');const r=await fetch('/api/setup',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,email,password})});const j=await r.json();if(!r.ok){setError(j.error);return;}router.push('/login');}
-return <main className="simpleAuth"><div className="setupCard"><Brand/><span className="eyebrow">INITIALISATION UNIQUE</span><h1>Créer le compte administrateur Presty</h1><p>Ce compte aura une visibilité complète et pourra créer tous les comptes instituts.</p><form onSubmit={submit}><label>Nom<input value={name} onChange={e=>setName(e.target.value)} required/></label><label>Email administrateur<input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></label><label>Mot de passe<input type="password" minLength="8" value={password} onChange={e=>setPassword(e.target.value)} required/></label>{error&&<div className="error">{error}</div>}<button className="primary">Créer mon espace administrateur</button></form></div></main>}
+import Initialisation from '@/components/Initialisation';
+export default function Page(){return <Initialisation/>}

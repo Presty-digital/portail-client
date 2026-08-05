@@ -1,10 +1,4 @@
-import { randomUUID } from 'crypto';
-import { apiError, loadState, saveState } from '@/lib/server';
-export async function POST(req, { params }) {
-  try {
-    if ((req.headers.get('x-webhook-secret') || '') !== process.env.GHL_WEBHOOK_SECRET) return new Response('Unauthorized', {status:401});
-    const { institutId } = await params; const body = await req.json(); const state = await loadState(); const now = new Date();
-    state.leads.unshift({ id: randomUUID(), institutId, campaignId: body.campaign_id || '', firstName: body.first_name || '', lastName: body.last_name || '', phone: body.phone || '', email: body.email || '', source: body.source || 'GHL', problem: body.custom_field_probleme || '', status: 'Non qualifié', present: null, converted: false, value: 0, notes: '', year: now.getFullYear(), month: now.getMonth()+1, createdAt: now.toISOString() });
-    await saveState(state); return new Response('OK');
-  } catch(e){ return apiError(e); }
-}
+import { NextResponse } from 'next/server';
+import { loadState, saveState } from '@/lib/server';
+import { uid, today } from '@/lib/state';
+export async function POST(req,{params}){try{if(req.headers.get('x-webhook-secret')!==process.env.GHL_WEBHOOK_SECRET)return NextResponse.json({error:'Unauthorized'},{status:401});const {institutId}=await params;const b=await req.json();const s=await loadState();const campaign=s.campaigns.find(c=>c.id===b.campaign_id&&c.institutId===institutId);s.leads.unshift({id:uid(),institutId,dateContact:today(),prenom:b.first_name||'',nom:b.last_name||'',telephone:b.phone||'',email:b.email||'',source:b.source||'GHL',campaignId:campaign?.id||'',category:campaign?.category||'Autres',typeSoin:campaign?.name||b.type_soin||'',problematique:b.custom_field_probleme||b.problematique||'',statut:'Non qualifié',creneauRdv:'',presence:'À confirmer',converti:'Non',valeurClient:0,notes:'',createdAt:new Date().toISOString()});await saveState(s);return NextResponse.json({ok:true});}catch(e){return NextResponse.json({error:e.message},{status:500});}}

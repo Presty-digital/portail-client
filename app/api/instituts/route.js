@@ -1,19 +1,4 @@
-import { randomUUID } from 'crypto';
-import { adminSupabase } from '@/lib/supabase';
-import { apiError, loadState, requireAdmin, saveState } from '@/lib/server';
-
-export async function POST(req) {
-  try {
-    await requireAdmin(req);
-    const body = await req.json();
-    if (!body.name || !body.email || !body.password) return Response.json({ error: 'Nom, email et mot de passe requis.' }, { status: 400 });
-    const institutId = randomUUID();
-    const supabase = adminSupabase();
-    const { data, error } = await supabase.auth.admin.createUser({ email: body.email, password: body.password, email_confirm: true, user_metadata: { role: 'institut', institutId, name: body.contactName || body.name } });
-    if (error) throw error;
-    const state = await loadState();
-    state.instituts.push({ id: institutId, authUserId: data.user.id, name: body.name, ville: body.ville || '', contactName: body.contactName || '', email: body.email, active: true, createdAt: new Date().toISOString() });
-    await saveState(state);
-    return Response.json({ ok: true, institutId });
-  } catch(e) { return apiError(e); }
-}
+import { NextResponse } from 'next/server';
+import { authProfile, createAuthUser, deleteAuthUser, insertProfile, loadState, saveState } from '@/lib/server';
+import { uid, today } from '@/lib/state';
+export async function POST(req){try{const p=await authProfile(req);if(!p||p.role!=='agency_admin')return NextResponse.json({error:'Réservé à Presty'},{status:403});const b=await req.json();if(!b.name||!b.email||!b.password)return NextResponse.json({error:'Nom, email et mot de passe requis'},{status:400});const institut={id:uid(),name:b.name,ville:b.ville||'',contactName:b.contactName||'',email:b.email,active:true,createdAt:today()};const data=await createAuthUser({email:b.email,password:b.password,name:b.contactName||b.name});try{await insertProfile({id:data.id,role:'institut',institut_id:institut.id});}catch(e){await deleteAuthUser(data.id);throw e;}const s=await loadState();s.instituts.push(institut);await saveState(s);return NextResponse.json({institut});}catch(e){return NextResponse.json({error:e.message},{status:500});}}
