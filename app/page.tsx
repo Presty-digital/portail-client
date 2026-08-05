@@ -1,1 +1,1 @@
-import{redirect}from'next/navigation';export default function Home(){redirect('/login')}
+import PrestyApp from "@/components/PrestyApp";export default function Page(){return <PrestyApp/>}

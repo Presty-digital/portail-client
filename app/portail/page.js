@@ -1,2 +1,1 @@
-import Portal from '@/components/Portal';
-export default function Page(){return <Portal/>}
+import PrestyApp from "@/components/PrestyApp";export default function Page(){return <PrestyApp/>}

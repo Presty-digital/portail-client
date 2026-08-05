@@ -1,3 +1,1 @@
-import type{Campaign,Expense,Lead}from './types';
-export function metrics(leads:Lead[],expenses:Expense[],campaigns:Campaign[]){const spend=expenses.reduce((s,x)=>s+Number(x.amount||0),0);const revenue=leads.filter(x=>x.converti).reduce((s,x)=>s+Number(x.valeurClient||0),0);const rdv=leads.filter(x=>x.statut==='RDV fixé'||x.statut==='Client converti'||x.creneauRdv).length;const clients=leads.filter(x=>x.converti).length;const present=leads.filter(x=>x.presence==='Oui').length;return {spend,revenue,leads:leads.length,rdv,clients,present,roi:spend?revenue/spend:0,cpl:leads.length?spend/leads.length:0,cac:clients?spend/clients:0,conversion:leads.length?clients/leads.length*100:0}}
-export const euro=(n:number)=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+export * from "./stats.js";

@@ -1,4 +1,1 @@
-import {serverConfig} from './supabase';import {migrate} from './state';import type {PrestyState} from './types';
-function headers(key:string,extra:Record<string,string>={}){return{apikey:key,Authorization:`Bearer ${key}`,'Content-Type':'application/json',...extra}}
-export async function loadState():Promise<PrestyState>{const{url,serviceKey}=serverConfig();const r=await fetch(`${url}/rest/v1/presty_app_state?id=eq.main&select=payload`,{headers:headers(serviceKey),cache:'no-store'});if(!r.ok)throw new Error(await r.text());const rows=await r.json();return migrate(rows?.[0]?.payload)}
-export async function saveState(state:PrestyState){const next=migrate(state);const{url,serviceKey}=serverConfig();const r=await fetch(`${url}/rest/v1/presty_app_state?on_conflict=id`,{method:'POST',headers:headers(serviceKey,{Prefer:'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify({id:'main',payload:next,version:next.version,updated_at:new Date().toISOString()})});if(!r.ok)throw new Error(await r.text());return next}
+export * from "./db.js";

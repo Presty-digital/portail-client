@@ -1,9 +1,1 @@
-export type Role = 'agency_admin' | 'institut';
-export type Category = 'Minceur' | 'Visage' | 'Épilation' | 'Autres';
-export type Institut = {id:string;name:string;ville:string;contactName:string;email:string;active:boolean;createdAt:string};
-export type Campaign = {id:string;institutId:string;category:Category;name:string;active:boolean};
-export type LeadStatus = 'Non qualifié'|'Appel 1'|'Appel 2'|'RDV fixé'|'Client converti'|'Perdu';
-export type Lead = {id:string;institutId:string;dateContact:string;prenom:string;nom:string;telephone:string;email:string;source:string;campaignId:string;problematique:string;statut:LeadStatus;creneauRdv:string;presence:'Oui'|'Non'|'';converti:boolean;valeurClient:number;notes:string};
-export type Expense = {id:string;institutId:string;campaignId:string;year:number;month:number;amount:number};
-export type Review = {id:string;institutId:string;date:string;note:number;texte:string;reponseEnvoyee:boolean};
-export type PrestyState = {version:number;instituts:Institut[];campaigns:Campaign[];leads:Lead[];expenses:Expense[];reviews:Review[]};
+export type Institut=any; export type Expense=any; export type Lead=any; export type Profile=any;

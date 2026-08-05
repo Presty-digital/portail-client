@@ -1,2 +1,1 @@
-import PrestyApp from "@/components/PrestyApp";
-export default function Page(){return <PrestyApp/>}
+import PrestyApp from "@/components/PrestyApp";export default function Page(){return <PrestyApp/>}

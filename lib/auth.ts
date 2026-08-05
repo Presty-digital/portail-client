@@ -1,2 +1,2 @@
-import {redirect} from "next/navigation";import {createClient} from "./supabase/server";
-export async function requireProfile(expected?:'agency_admin'|'institut'){const supabase=await createClient();const{data:{user}}=await supabase.auth.getUser();if(!user)redirect('/login');const{data:profile}=await supabase.from('profiles').select('role,institut_id').eq('id',user.id).single();if(!profile)redirect('/login');if(expected&&profile.role!==expected)redirect(profile.role==='agency_admin'?'/agence':'/dashboard');return{supabase,user,profile}}
+import {redirect} from "next/navigation";import {getSession} from "./session.js";
+export async function requireProfile(expected){const s=await getSession();if(!s)redirect("/");if(expected&&s.role!==expected)redirect("/");return s}

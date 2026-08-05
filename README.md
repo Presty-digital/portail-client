@@ -1,16 +1,12 @@
-# Portail Presty V5
+# Portail Client Presty — V6 stable
 
-Base unique inspirée du CRM GHR : Next.js App Router, état JSON centralisé dans Supabase, migrations automatiques non destructives.
+Cette archive remplace volontairement tous les chemins créés par les versions V2, V3, V4 et V5. Elle est conçue pour être envoyée avec GitHub **Add file → Upload files**, sans suppression manuelle.
 
-## Installation
-1. Exécuter `supabase-setup.sql` une seule fois dans Supabase SQL Editor.
-2. Ajouter dans Vercel :
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `SUPABASE_SERVICE_ROLE_KEY`
-   - `APP_SESSION_SECRET`
-   - `GHL_WEBHOOK_SECRET`
-3. Importer le repository dans Vercel.
-4. Ouvrir l’application : le premier écran crée le compte administrateur.
+## Première installation
+1. Exécuter `supabase-setup.sql` une seule fois.
+2. Variables Vercel : `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GHL_WEBHOOK_SECRET`, `APP_SESSION_SECRET`.
+3. Uploader tout le contenu à la racine du même repository.
+4. Ouvrir l’application et créer le premier compte administrateur.
 
-## Comptes
-L’administrateur crée les comptes instituts depuis l’application. Les mots de passe sont hachés avec scrypt et les sessions sont placées dans un cookie HTTP-only signé.
+## Mises à jour
+La table `app_state` et la fonction `migrate()` conservent les données.

@@ -1,2 +1,1 @@
-// Fichier de compatibilité : l'architecture V4 utilise lib/server.js.
-export {};
+export async function createClient(){return{auth:{getUser:async()=>({data:{user:null},error:null})},from:()=>({select:async()=>({data:[],error:null})})}}

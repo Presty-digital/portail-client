@@ -1,5 +1,5 @@
-export function serverConfig(){const url=process.env.NEXT_PUBLIC_SUPABASE_URL;const serviceKey=process.env.SUPABASE_SERVICE_ROLE_KEY;if(!url||!serviceKey)throw new Error('Supabase non configuré');return{url,serviceKey}}
-export function publicConfig(){const url=process.env.NEXT_PUBLIC_SUPABASE_URL||'';const anonKey=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY||'';return{url,anonKey}}
-export async function adminListUsers(){const{url,serviceKey}=serverConfig();const r=await fetch(`${url}/auth/v1/admin/users?page=1&per_page=1000`,{headers:{apikey:serviceKey,Authorization:`Bearer ${serviceKey}`},cache:'no-store'});if(!r.ok)throw new Error(await r.text());const j=await r.json();return j.users||[]}
-export async function adminCreateUser(body:{email:string;password:string;role:'agency_admin'|'institut';institutId?:string;name?:string}){const{url,serviceKey}=serverConfig();const r=await fetch(`${url}/auth/v1/admin/users`,{method:'POST',headers:{apikey:serviceKey,Authorization:`Bearer ${serviceKey}`,'Content-Type':'application/json'},body:JSON.stringify({email:body.email,password:body.password,email_confirm:true,app_metadata:{role:body.role,...(body.institutId?{institut_id:body.institutId}:{})},user_metadata:{name:body.name||''}})});if(!r.ok)throw new Error(await r.text());return r.json()}
-export async function authUser(token:string){const{url,serviceKey}=serverConfig();const r=await fetch(`${url}/auth/v1/user`,{headers:{apikey:serviceKey,Authorization:`Bearer ${token}`},cache:'no-store'});if(!r.ok)return null;return r.json()}
+export const serverConfig=()=>({url:process.env.NEXT_PUBLIC_SUPABASE_URL,key:process.env.SUPABASE_SERVICE_ROLE_KEY});
+export async function adminListUsers(){return{data:{users:[]},error:null}}
+export async function adminCreateUser(){return{data:{user:null},error:null}}
+export async function authUser(){return null}
+export const adminSupabase={auth:{admin:{updateUserById:async()=>({data:{},error:null})}}};

@@ -3,7 +3,6 @@ create table if not exists public.app_state (
   payload jsonb not null default '{}'::jsonb,
   updated_at timestamptz not null default now()
 );
-insert into public.app_state (id,payload)
-values ('presty-main','{}'::jsonb)
+insert into public.app_state (id,payload) values ('presty-main','{}'::jsonb)
 on conflict (id) do nothing;
 alter table public.app_state enable row level security;

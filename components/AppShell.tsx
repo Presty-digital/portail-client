@@ -1,2 +1,1 @@
-import Link from "next/link";
-export default function AppShell({children,agency=false}:{children:React.ReactNode;agency?:boolean}){return <div className="shell"><aside className="sidebar"><div className="brand"><span className="brand-dot">P</span><span>PRESTY</span></div><nav className="nav">{agency?<><Link href="/agence">Instituts</Link></>:<><Link href="/dashboard">Tableau de bord</Link><Link href="/dashboard/prospects">Prospects</Link><Link href="/dashboard/avis">Avis Google</Link></>}</nav></aside><main className="main">{children}</main></div>}
+import PrestyApp from "@/components/PrestyApp";export default function Compatibility(){return <PrestyApp/>}

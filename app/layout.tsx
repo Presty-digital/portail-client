@@ -1,3 +1,1 @@
-import type{Metadata}from'next';import'./globals.css';import{AuthProvider}from'@/components/AuthProvider';
-export const metadata:Metadata={title:'Portail Presty',description:'Pilotage des campagnes et prospects Presty'};
-export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="fr"><body><AuthProvider>{children}</AuthProvider></body></html>}
+import "./globals.css";export const metadata={title:"Portail Client Presty",description:"Suivi des campagnes et CRM"};export default function RootLayout({children}){return <html lang="fr"><body>{children}</body></html>}
