@@ -1,5 +1,9 @@
-export type CategoryName = "Minceur" | "Visage" | "Épilation" | "Autres";
-export type Campaign = { id:string; nom:string; categorie_id:string; categories_campagnes?:{nom:CategoryName}|null };
-export type Lead = { id:string; institut_id:string; campagne_soin_id:string|null; date_contact:string; prenom:string|null; nom:string|null; telephone:string|null; email:string|null; source:string|null; type_soin:string|null; problematique:string|null; disponibilites:string|null; informations:string|null; statut:string; creneau_rdv:string|null; presence:string|null; converti_patient:boolean; valeur_client:number|null; notes:string|null; prochaine_action:string|null; campagnes_soins?:{nom:string; categories_campagnes?:{nom:CategoryName}|null}|null };
-export type Expense = { id:string; campagne_soin_id:string; montant:number; campagnes_soins?:{nom:string; categories_campagnes?:{nom:CategoryName}|null}|null };
-export type Performance = { label:string; category:CategoryName|string; depenses:number; prospects:number; rdv:number; presents:number; ventes:number; ca:number; cpl:number; cac:number; roi:number; conversion:number };
+export type Role = 'agency_admin' | 'institut';
+export type Category = 'Minceur' | 'Visage' | 'Épilation' | 'Autres';
+export type Institut = {id:string;name:string;ville:string;contactName:string;email:string;active:boolean;createdAt:string};
+export type Campaign = {id:string;institutId:string;category:Category;name:string;active:boolean};
+export type LeadStatus = 'Non qualifié'|'Appel 1'|'Appel 2'|'RDV fixé'|'Client converti'|'Perdu';
+export type Lead = {id:string;institutId:string;dateContact:string;prenom:string;nom:string;telephone:string;email:string;source:string;campaignId:string;problematique:string;statut:LeadStatus;creneauRdv:string;presence:'Oui'|'Non'|'';converti:boolean;valeurClient:number;notes:string};
+export type Expense = {id:string;institutId:string;campaignId:string;year:number;month:number;amount:number};
+export type Review = {id:string;institutId:string;date:string;note:number;texte:string;reponseEnvoyee:boolean};
+export type PrestyState = {version:number;instituts:Institut[];campaigns:Campaign[];leads:Lead[];expenses:Expense[];reviews:Review[]};

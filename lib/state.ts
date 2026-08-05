@@ -1,0 +1,5 @@
+import type {PrestyState, Lead} from './types';
+export const CURRENT_VERSION=3;
+export function emptyState():PrestyState{return {version:CURRENT_VERSION,instituts:[],campaigns:[],leads:[],expenses:[],reviews:[]}}
+const normalizeLead=(l:Partial<Lead>):Lead=>({id:l.id||crypto.randomUUID(),institutId:l.institutId||'',dateContact:l.dateContact||new Date().toISOString().slice(0,10),prenom:l.prenom||'',nom:l.nom||'',telephone:l.telephone||'',email:l.email||'',source:l.source||'GHL',campaignId:l.campaignId||'',problematique:l.problematique||'',statut:l.statut||'Non qualifié',creneauRdv:l.creneauRdv||'',presence:l.presence||'',converti:Boolean(l.converti),valeurClient:Number(l.valeurClient||0),notes:l.notes||''});
+export function migrate(raw:unknown):PrestyState{const r=(raw&&typeof raw==='object'?raw:{}) as Partial<PrestyState>;return {...emptyState(),...r,version:CURRENT_VERSION,instituts:Array.isArray(r.instituts)?r.instituts:[],campaigns:Array.isArray(r.campaigns)?r.campaigns:[],leads:Array.isArray(r.leads)?r.leads.map(normalizeLead):[],expenses:Array.isArray(r.expenses)?r.expenses:[],reviews:Array.isArray(r.reviews)?r.reviews:[]}}

@@ -1,36 +1,28 @@
-# Portail Client Presty — V2
+# Portail Client Presty — V3
 
-## Nouveautés V2
-- Branding Presty : Urbanist, rose `#DB6C7A`, crème `#F7F1E8`, noir `#201B1B`.
-- Nomenclature `instituts` / rôle `institut`.
-- Catégories fixes : Minceur, Visage, Épilation, Autres.
-- Soins et campagnes propres à chaque institut.
-- Dépenses publicitaires saisies mensuellement par Presty, par soin/campagne.
-- Dashboard calculé en direct depuis le CRM et les dépenses.
-- Résultats globaux, par catégorie et par soin/campagne.
-- CRM avec vue Kanban et vue Liste.
-- Module Avis Google en lecture côté institut.
-- Webhook GHL rattachant un lead à un soin lorsque `campagne_soin_id` ou `type_soin` est transmis.
+## Ce qui change
 
-## Installation
-```bash
-npm install
-npm run build
-npm run dev
-```
+- Design premium inspiré des interfaces Apple, avec identité Presty.
+- Connexion réelle à Supabase via les variables Vercel.
+- Création du premier compte administrateur depuis `/initialisation`.
+- Création automatique des comptes instituts depuis l’espace agence.
+- Dashboard mensuel dynamique : CA, dépenses, ROI, CPL, RDV et conversions.
+- Dépenses saisies par Presty et classées par catégorie / soin.
+- CRM Kanban + Liste.
+- Webhook GoHighLevel sécurisé.
+- Données stockées dans un état JSON versionné et migré automatiquement, sur le modèle du CRM GHR.
 
-## Supabase
-Pour un nouveau projet, exécuter `supabase/schema.sql` dans SQL Editor.
+## Initialisation unique
 
-Cette V2 modifie fortement le schéma de la V1 (`clients` devient `instituts`, `client` devient `institut`). Sur une base V1 déjà remplie, ne pas exécuter ce script sans migration des données.
+1. Dans Supabase → SQL Editor, exécuter `supabase-setup.sql` une seule fois.
+2. Les variables suivantes doivent exister dans Vercel :
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `GHL_WEBHOOK_SECRET`
+3. Redéployer Vercel.
+4. Ouvrir `/initialisation` pour créer le premier compte administrateur Presty.
 
-## Variables exactes
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `GHL_WEBHOOK_SECRET`
+## Mises à jour futures
 
-## Webhook GHL
-`POST /api/webhook/ghl/<INSTITUT_UUID>` avec le header `x-webhook-secret`.
-
-Champs recommandés : `first_name`, `last_name`, `phone`, `email`, `source`, `problematique`, `campagne_soin_id`. À défaut, `type_soin` est rapproché du nom d’une campagne existante.
+La fonction `migrate()` dans `lib/state.ts` fusionne les anciennes données avec la nouvelle structure. Les prochaines versions n’écrasent pas la base et ne suppriment pas les données existantes.
