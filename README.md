@@ -1,3 +1,9 @@
+# Portail Presty — V7.2 corrective
+
+Correction TypeScript de `lib/state.ts` : exports directs de `STATE_ID`, `emptyState`, `migrate`, `CATEGORIES`, `STATUTS`, `uid` et `today`.
+
+Cette version conserve la même table Supabase et ne supprime aucune donnée.
+
 # Portail Presty — V7.1 corrective
 
 Cette version corrige le contrôle TypeScript de Vercel :
