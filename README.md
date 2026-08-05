@@ -1,3 +1,15 @@
+# Portail Presty — V7.1 corrective
+
+Cette version corrige le contrôle TypeScript de Vercel :
+
+- remplacement de l’ancien `app/agence/actions.ts` par un fichier de compatibilité neutre ;
+- suppression des réexports circulaires dans `lib/config.ts` ;
+- suppression des réexports circulaires dans `lib/db.ts` ;
+- aucune réinitialisation ou suppression de la table `app_state` ;
+- les données Supabase existantes restent conservées.
+
+Téléverser tout le contenu de cette archive avec GitHub `Add file > Upload files`.
+
 # Portail Client Presty — V7 stable
 
 ## Correctif principal

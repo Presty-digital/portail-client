@@ -1,3 +1,3 @@
-"use server";import {revalidatePath} from 'next/cache';import {requireProfile} from '@/lib/auth';
-export async function createCampaign(formData:FormData){const{supabase}=await requireProfile('agency_admin');const institut_id=String(formData.get('institut_id'));const categorie_id=String(formData.get('categorie_id'));const nom=String(formData.get('nom')||'').trim();if(!nom)return;const{error}=await supabase.from('campagnes_soins').insert({institut_id,categorie_id,nom});if(error)throw new Error(error.message);revalidatePath(`/agence/${institut_id}`)}
-export async function upsertExpense(formData:FormData){const{supabase}=await requireProfile('agency_admin');const institut_id=String(formData.get('institut_id'));const campagne_soin_id=String(formData.get('campagne_soin_id'));const annee=Number(formData.get('annee'));const mois=Number(formData.get('mois'));const montant=Number(formData.get('montant'));const{error}=await supabase.from('depenses_publicitaires').upsert({institut_id,campagne_soin_id,annee,mois,montant},{onConflict:'institut_id,campagne_soin_id,annee,mois'});if(error)throw new Error(error.message);revalidatePath(`/agence/${institut_id}`);revalidatePath('/dashboard')}
+// Compatibility file kept to overwrite the obsolete server actions from earlier versions.
+// The current application manages agency actions through the API handlers.
+export {};
