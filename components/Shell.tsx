@@ -1,1 +1,1 @@
-import PrestyApp from "@/components/PrestyApp";export default function Compatibility(){return <PrestyApp/>}
+export default function CompatibilityComponent(){return null}

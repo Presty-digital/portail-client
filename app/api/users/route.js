@@ -1,1 +1,1 @@
-import {NextResponse} from "next/server";export async function PATCH(){return NextResponse.json({error:"Utilisez la gestion des instituts"},{status:410})}
+export {GET,POST,PUT,PATCH,DELETE} from "@/lib/handlers/legacy";

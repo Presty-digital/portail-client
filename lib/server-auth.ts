@@ -1,1 +1,1 @@
-export {getSession as authUser} from "./session.js";
+export async function requireSession(){return null}

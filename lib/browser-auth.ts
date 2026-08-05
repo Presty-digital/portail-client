@@ -1,1 +1,1 @@
-export const login=async()=>({});
+export async function login(){return null}

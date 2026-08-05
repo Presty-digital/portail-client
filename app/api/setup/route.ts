@@ -1,1 +1,1 @@
-import {NextResponse} from "next/server";export const dynamic="force-dynamic";export async function GET(){return NextResponse.json({initialized:false})}export async function POST(){return NextResponse.json({error:"La route JavaScript principale gère l’initialisation"},{status:409})}
+export {GET,POST} from "@/lib/handlers/setup";

@@ -1,1 +1,1 @@
-import {NextResponse} from "next/server";export async function POST(){return NextResponse.json({error:"Utilisez la route active"},{status:410})}
+export {POST} from "@/lib/handlers/instituts";

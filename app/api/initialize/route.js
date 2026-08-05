@@ -1,1 +1,1 @@
-export {GET,POST} from "../setup/route.js";
+export {GET,POST} from "@/lib/handlers/setup";

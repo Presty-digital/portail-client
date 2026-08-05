@@ -1,1 +1,2 @@
-export async function createClient(){return{auth:{getUser:async()=>({data:{user:null},error:null})},from:()=>({select:async()=>({data:[],error:null})})}}
+export async function createClient(){return null}
+export const adminSupabase=null;

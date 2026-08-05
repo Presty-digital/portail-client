@@ -1,1 +1,1 @@
-export type Institut=any; export type Expense=any; export type Lead=any; export type Profile=any;
+export type AppState=any;export type Institut=any;export type Lead=any;export type Expense=any;

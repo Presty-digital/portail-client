@@ -1,1 +1,1 @@
-export async function apiFetch(url,options){const r=await fetch(url,options);return r.json()}
+export async function api(){return null}

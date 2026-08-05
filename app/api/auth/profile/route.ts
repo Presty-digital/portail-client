@@ -1,1 +1,1 @@
-import {NextResponse} from "next/server";export async function GET(){return NextResponse.json({profile:null})}
+export {GET} from "@/lib/handlers/profile";
