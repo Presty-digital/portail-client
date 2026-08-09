@@ -1,1 +1,1 @@
-export {GET,POST,PUT,PATCH,DELETE} from "@/lib/handlers/legacy";
+export {GET,POST,PUT,PATCH,DELETE} from "@/lib/handlers/institut-detail";

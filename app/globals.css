@@ -136,3 +136,18 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}.app-shell,.app-main,.cont
 @media(max-width:360px){
   .topbar-title h2{max-width:82px}.profile-pill{max-width:46vw}.profile-pill b{max-width:82px}.profile-pill i{display:none}
 }
+
+/* V16 — gestion comptes + exports */
+.archived-accounts{margin-top:34px;padding-top:24px;border-top:1px solid var(--line)}
+.archived-accounts>.eyebrow{display:block;margin-bottom:14px}
+.institute-card.archived{opacity:.72;background:#F7F8FB}
+.account-title-row{display:flex;align-items:center;gap:8px;min-width:0}
+.account-title-row h3{min-width:0}
+.account-management{border-top:1px solid var(--line)}
+.danger-button{border:1px solid rgba(183,72,72,.25);background:#FFF5F5;color:#B74848;border-radius:12px;padding:11px 14px;font-weight:700;cursor:pointer}
+.danger-button:hover{background:#FDECEC;border-color:rgba(183,72,72,.4)}
+.danger-button:disabled{opacity:.45;cursor:not-allowed}
+.danger-zone{margin-top:10px;padding:14px;border:1px solid rgba(183,72,72,.18);border-radius:14px;background:#FFF8F8}
+.danger-zone p{margin:0 0 12px;color:#7A4747;font-size:13px;line-height:1.5}
+.page-actions{flex-wrap:wrap}
+@media(max-width:700px){.page-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:7px}.page-actions>.segmented{grid-column:1/-1}.page-actions>button{width:100%!important}.page-actions>.primary:last-child:nth-child(3){grid-column:auto}.archived-accounts{margin-top:24px}}

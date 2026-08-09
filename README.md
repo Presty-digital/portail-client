@@ -1,18 +1,8 @@
-# Portail Presty — V14
+# Portail Presty V16
 
-V14 corrige la topbar mobile/tablette et la fiche contact plein écran responsive.
+V16 ajoute :
+- nettoyage et déduplication des métadonnées GoHighLevel dans les fiches contact ;
+- archivage, réactivation et suppression définitive sécurisée des comptes clients ;
+- exports CSV depuis Contacts et CRM, limités au compte et aux filtres actuellement affichés.
 
-# Portail Presty — V13
-
-V13 : refonte responsive structurelle tablette/mobile.
-
-- Admin : cartes comptes clients sans chevauchement, actions séparées du contenu.
-- CRM : tableau desktop conservé, liste compacte dédiée tablette/mobile.
-- Contacts : liste compacte dédiée tablette/mobile.
-- Fiches contact / drawers : plein écran jusqu'à 960 px.
-- Pipeline : empilé verticalement sur tablette/mobile, sans défilement horizontal forcé.
-- Filtres et en-têtes : grilles adaptatives sans largeur minimale hors écran.
-- Navigation mobile : sidebar coulissante et topbar contenue dans le viewport.
-- Largeurs globales sécurisées pour éviter les débordements horizontaux.
-
-La structure de données et la base Supabase ne sont pas réinitialisées.
+La structure Supabase `app_state` existante est conservée : aucune migration SQL manuelle n'est requise.
