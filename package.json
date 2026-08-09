@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v16",
-  "version": "16.1.0",
+  "name": "portail-presty-v17",
+  "version": "17.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
