@@ -1,3 +1,7 @@
+## V9.1 — Correctif TypeScript
+
+Correction des types de migration dans `lib/state.ts` afin de conserver la compatibilité avec les anciennes données sans bloquer le build TypeScript.
+
 # Portail Presty — V9
 
 V9 transforme le portail en CRM multi-comptes avec trois rôles : **Admin Presty**, **Client** et **Setter téléphonique**.
