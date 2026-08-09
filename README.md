@@ -1,3 +1,13 @@
+# Portail Client Presty — V12.2
+
+Correctif V12.2 :
+- ordre des contacts du CRM conservé selon l’ordre d’enregistrement ; une modification ne fait plus remonter la ligne ;
+- KPI Rendez-vous calculé selon `rdvAt` et non selon la date de création du prospect ;
+- filtre « Ce mois » couvre le mois civil complet ;
+- ajout du raccourci SMS dans Rendez-vous ;
+- conservation de toutes les fonctions V12/V11.
+
+La migration reste non destructive et continue d’utiliser la même base Supabase.
 # Portail Presty — V12
 
 ## Évolutions V12
