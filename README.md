@@ -1,52 +1,69 @@
-# Portail Client Presty — V8 CRM
+# Portail Presty — V9
 
-## Objectif
-La V8 transforme l’espace client en véritable CRM simple à utiliser au quotidien, tout en conservant la base Supabase `app_state` et les données existantes.
+V9 transforme le portail en CRM multi-comptes avec trois rôles : **Admin Presty**, **Client** et **Setter téléphonique**.
 
-## Espace client
-Navigation :
-- Tableau de bord
-- Contacts
-- CRM
-- Calendrier
-- Publicité
-- Statistiques
-- Paramètres
+## Évolutions principales
 
-### CRM
-- Vue Pipeline + vue Liste.
-- Filtres : période, mois précis, catégorie, statut, source, recherche.
-- Liste éditable directement comme un tableur : catégorie, statut, prochaine action, RDV, valeur et commentaire.
-- Fiche contact en panneau latéral sans quitter le CRM.
-- Commentaires horodatés avec historique.
-- Activités commerciales et prochaine action.
-- Rendez-vous avec date/heure, visibles automatiquement dans le Calendrier.
+- CRM : la vue **Liste est désormais la vue par défaut** ; Pipeline reste disponible.
+- Filtres CRM : recherche, période, mois, catégorie, statut et formulaire.
+- Statuts commerciaux par défaut : `Nouveau lead → Appel 1 → Appel 2 → En échange → RDV fixé → RDV réalisé → Gagné / Perdu`.
+- Pastilles de couleur pour repérer immédiatement le statut.
+- Colonne commentaire en lecture seule dans la liste : l'ajout se fait dans la fiche contact afin de conserver un historique horodaté.
+- Actions rapides : Appeler, WhatsApp et SMS.
+- Fiche contact latérale : coordonnées, suivi, rendez-vous, réponses du formulaire, commentaires et historique.
+- `Calendrier` devient **Rendez-vous** avec une vue agenda/listing par jour (Aujourd'hui, Demain, 7 jours, À venir, Passés, date précise).
+- Paramètres client avec sous-onglets : Compte, Utilisateur, CRM, Intégrations et Notifications.
+- Le nom de l'espace client est basé sur le **nom de l'entreprise**, distinct du nom de l'utilisateur.
+- Déconnexion visible en bas de la navigation.
 
-### Contacts
-Base centrale de tous les prospects et clients. La gestion commerciale quotidienne reste dans le CRM.
+## Multi-comptes et rôles
 
-### Calendrier
-Les rendez-vous fixés dans le CRM apparaissent automatiquement dans la vue mensuelle.
+### Admin Presty
+- voit tous les comptes ;
+- crée les comptes clients et les utilisateurs ;
+- peut entrer dans n'importe quel espace client via le sélecteur de profil ;
+- configure le routage GHL des comptes.
 
-### Paramètres
-Les catégories CRM sont personnalisables pour que l’application puisse servir à tous les secteurs, pas seulement à l’esthétique.
+### Client
+- ne voit que son entreprise ;
+- dispose de Tableau de bord, Contacts, CRM, Rendez-vous, Publicité, Statistiques et Paramètres.
+
+### Setter téléphonique
+- l'Admin choisit les comptes auxquels le setter a accès ;
+- le setter peut switcher uniquement entre ces comptes ;
+- accès limité à Tableau de bord, Contacts, CRM et Rendez-vous ;
+- aucun accès aux Paramètres / Intégrations.
+
+Les permissions sont filtrées **côté serveur**, pas seulement dans l'interface.
 
 ## GoHighLevel
-Deux routes sont disponibles :
-- `/api/webhook/ghl` : route recommandée. Le portail identifie le client grâce au `locationId` du sous-compte GHL.
-- `/api/webhook/ghl/[institutId]` : route historique conservée pour compatibilité.
 
-Dans l’espace agence > Clients, Presty peut associer :
-- un `Location ID` GHL à un client ;
-- des `Form ID` à une catégorie et un service.
+Webhook générique recommandé :
 
-Le payload GHL peut notamment contenir `locationId`, `formId`, `contactId`, prénom, nom, téléphone, email, source et campagne. Le contact est alors créé/mis à jour dans le bon CRM.
+`POST /api/webhook/ghl`
 
-Le webhook nécessite le header :
+Header :
+
 `x-webhook-secret: <GHL_WEBHOOK_SECRET>`
 
-## Migration
-La V8 utilise `CURRENT_VERSION = 10`. La migration est non destructive : les contacts, utilisateurs, dépenses, avis et intégrations existants sont conservés. Les anciens statuts sont normalisés vers le nouveau pipeline.
+Le portail peut router le lead grâce au `locationId`, puis associer le `formId` au nom du formulaire et à une catégorie. Les réponses supplémentaires reçues du formulaire sont conservées dans `additionalInfo` et affichées dans le bloc **Informations complémentaires** de la fiche contact.
 
-## Charte
-Palette Presty : `#1D1E22`, `#2D45F9`, `#FDFDFD`, `#DAE7FF`, `#F2F4F9`.
+Champs reconnus notamment : `locationId`, `formId`, `formName`, `contactId`, prénom, nom, téléphone, email, campagne, source et données personnalisées.
+
+## Base de données
+
+La V9 conserve la même table Supabase `app_state`. La migration `CURRENT_VERSION = 11` enrichit les objets JSON existants sans réinitialiser la base.
+
+Aucun nouveau script SQL n'est requis si `public.app_state` existe déjà.
+
+## Variables Vercel
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `APP_SESSION_SECRET`
+- `GHL_WEBHOOK_SECRET`
+
+## Déploiement
+
+Uploader le contenu de cette archive sur le même repository GitHub. Vercel redéploie automatiquement. La base Supabase existante n'est pas écrasée.
