@@ -1,3 +1,7 @@
+# Portail Presty — V14
+
+V14 corrige la topbar mobile/tablette et la fiche contact plein écran responsive.
+
 # Portail Presty — V13
 
 V13 : refonte responsive structurelle tablette/mobile.
