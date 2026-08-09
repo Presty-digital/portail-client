@@ -1,4 +1,4 @@
-export const CURRENT_VERSION = 7;
+export const CURRENT_VERSION = 8;
 export const STATE_ID = "presty-main";
 export const CATEGORIES = ["Minceur", "Visage", "Épilation", "Autres"] as const;
 export const STATUTS = ["Non qualifié", "Appel 1", "Appel 2", "RDV fixé", "Client converti", "Perdu"] as const;

@@ -1,42 +1,21 @@
-# Portail Presty — V7.2 corrective
+# Portail Client Presty — V8 UX & Sécurité
 
-Correction TypeScript de `lib/state.ts` : exports directs de `STATE_ID`, `emptyState`, `migrate`, `CATEGORIES`, `STATUTS`, `uid` et `today`.
+## V8
+- Refonte UI complète basée sur la charte graphique Presty.
+- Palette : #1D1E22, #2D45F9, #FDFDFD, #DAE7FF, #F2F4F9.
+- Urbanist pour les textes ; Apfel Grotezk déclarée pour les titres avec fallback Urbanist si la webfont n'est pas disponible.
+- Logo Presty extrait de la charte fournie, sans recoloration rose.
+- Ombres douces et glassmorphism conformes à la direction artistique.
+- Nouvelle page de connexion responsive.
+- « Mot de passe oublié ? » avec email de récupération Supabase.
+- Page `/reset-password` pour choisir un nouveau mot de passe.
+- Modification du mot de passe depuis « Mon compte » une fois connecté.
+- Les nouveaux comptes admin/institut sont également provisionnés dans Supabase Auth pour permettre la récupération par email.
+- Les comptes historiques sont provisionnés automatiquement dans Supabase Auth lors de la première demande « Mot de passe oublié ».
 
-Cette version conserve la même table Supabase et ne supprime aucune donnée.
+## Important — récupération par email
+Dans Supabase > Authentication > URL Configuration, ajouter l'URL de production du portail dans les Redirect URLs, par exemple :
+`https://votre-portail.vercel.app/reset-password`
 
-# Portail Presty — V7.1 corrective
-
-Cette version corrige le contrôle TypeScript de Vercel :
-
-- remplacement de l’ancien `app/agence/actions.ts` par un fichier de compatibilité neutre ;
-- suppression des réexports circulaires dans `lib/config.ts` ;
-- suppression des réexports circulaires dans `lib/db.ts` ;
-- aucune réinitialisation ou suppression de la table `app_state` ;
-- les données Supabase existantes restent conservées.
-
-Téléverser tout le contenu de cette archive avec GitHub `Add file > Upload files`.
-
-# Portail Client Presty — V7 stable
-
-## Correctif principal
-
-La route `/api/setup` crée désormais réellement le premier compte administrateur :
-- vérification qu’aucun administrateur n’existe ;
-- validation email / mot de passe ;
-- hachage du mot de passe ;
-- enregistrement dans l’état Supabase `app_state` ;
-- ouverture immédiate d’une session sécurisée ;
-- redirection automatique vers l’espace administrateur.
-
-Les variantes historiques `route.js` et `route.ts` contiennent volontairement la même implémentation afin qu’un upload GitHub remplace correctement les fichiers des versions précédentes.
-
-## Variables Vercel
-
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `APP_SESSION_SECRET`
-- `GHL_WEBHOOK_SECRET`
-
-## Initialisation Supabase
-
-Exécuter `supabase-setup.sql` une seule fois. Les versions suivantes conservent la même ligne `presty-main` et migrent le JSON sans supprimer les données.
+## Base de données
+La V8 conserve la table `public.app_state` et la ligne `presty-main`. La migration incrémente uniquement la version de l'état et ne supprime aucune donnée métier.
