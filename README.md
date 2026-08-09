@@ -1,4 +1,5 @@
-## V9.1 — Correctif TypeScript
+# Portail Client Presty — V11
+
 
 Correction des types de migration dans `lib/state.ts` afin de conserver la compatibilité avec les anciennes données sans bloquer le build TypeScript.
 
@@ -71,3 +72,12 @@ Aucun nouveau script SQL n'est requis si `public.app_state` existe déjà.
 ## Déploiement
 
 Uploader le contenu de cette archive sur le même repository GitHub. Vercel redéploie automatiquement. La base Supabase existante n'est pas écrasée.
+
+
+## V11
+- Pipeline CRM personnalisable : étapes, ordre, couleurs et types métier.
+- No-show reconnu dans les statistiques.
+- Contacts : filtres catégorie, statut et formulaire.
+- CRM Liste simplifié avec bouton Voir la fiche.
+- Dashboard : filtre de période réellement appliqué aux KPI.
+- Correction de la zone Enregistrer dans Paramètres > Compte.
