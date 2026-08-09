@@ -1,21 +1,52 @@
-# Portail Client Presty — V8 UX & Sécurité
+# Portail Client Presty — V8 CRM
 
-## V8
-- Refonte UI complète basée sur la charte graphique Presty.
-- Palette : #1D1E22, #2D45F9, #FDFDFD, #DAE7FF, #F2F4F9.
-- Urbanist pour les textes ; Apfel Grotezk déclarée pour les titres avec fallback Urbanist si la webfont n'est pas disponible.
-- Logo Presty extrait de la charte fournie, sans recoloration rose.
-- Ombres douces et glassmorphism conformes à la direction artistique.
-- Nouvelle page de connexion responsive.
-- « Mot de passe oublié ? » avec email de récupération Supabase.
-- Page `/reset-password` pour choisir un nouveau mot de passe.
-- Modification du mot de passe depuis « Mon compte » une fois connecté.
-- Les nouveaux comptes admin/institut sont également provisionnés dans Supabase Auth pour permettre la récupération par email.
-- Les comptes historiques sont provisionnés automatiquement dans Supabase Auth lors de la première demande « Mot de passe oublié ».
+## Objectif
+La V8 transforme l’espace client en véritable CRM simple à utiliser au quotidien, tout en conservant la base Supabase `app_state` et les données existantes.
 
-## Important — récupération par email
-Dans Supabase > Authentication > URL Configuration, ajouter l'URL de production du portail dans les Redirect URLs, par exemple :
-`https://votre-portail.vercel.app/reset-password`
+## Espace client
+Navigation :
+- Tableau de bord
+- Contacts
+- CRM
+- Calendrier
+- Publicité
+- Statistiques
+- Paramètres
 
-## Base de données
-La V8 conserve la table `public.app_state` et la ligne `presty-main`. La migration incrémente uniquement la version de l'état et ne supprime aucune donnée métier.
+### CRM
+- Vue Pipeline + vue Liste.
+- Filtres : période, mois précis, catégorie, statut, source, recherche.
+- Liste éditable directement comme un tableur : catégorie, statut, prochaine action, RDV, valeur et commentaire.
+- Fiche contact en panneau latéral sans quitter le CRM.
+- Commentaires horodatés avec historique.
+- Activités commerciales et prochaine action.
+- Rendez-vous avec date/heure, visibles automatiquement dans le Calendrier.
+
+### Contacts
+Base centrale de tous les prospects et clients. La gestion commerciale quotidienne reste dans le CRM.
+
+### Calendrier
+Les rendez-vous fixés dans le CRM apparaissent automatiquement dans la vue mensuelle.
+
+### Paramètres
+Les catégories CRM sont personnalisables pour que l’application puisse servir à tous les secteurs, pas seulement à l’esthétique.
+
+## GoHighLevel
+Deux routes sont disponibles :
+- `/api/webhook/ghl` : route recommandée. Le portail identifie le client grâce au `locationId` du sous-compte GHL.
+- `/api/webhook/ghl/[institutId]` : route historique conservée pour compatibilité.
+
+Dans l’espace agence > Clients, Presty peut associer :
+- un `Location ID` GHL à un client ;
+- des `Form ID` à une catégorie et un service.
+
+Le payload GHL peut notamment contenir `locationId`, `formId`, `contactId`, prénom, nom, téléphone, email, source et campagne. Le contact est alors créé/mis à jour dans le bon CRM.
+
+Le webhook nécessite le header :
+`x-webhook-secret: <GHL_WEBHOOK_SECRET>`
+
+## Migration
+La V8 utilise `CURRENT_VERSION = 10`. La migration est non destructive : les contacts, utilisateurs, dépenses, avis et intégrations existants sont conservés. Les anciens statuts sont normalisés vers le nouveau pipeline.
+
+## Charte
+Palette Presty : `#1D1E22`, `#2D45F9`, `#FDFDFD`, `#DAE7FF`, `#F2F4F9`.

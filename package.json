@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v8",
-  "version": "8.0.0",
+  "name": "portail-presty-v8-crm",
+  "version": "8.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
