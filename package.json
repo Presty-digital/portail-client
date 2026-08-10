@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v20-1-ghl-oauth",
-  "version": "20.1.0",
+  "name": "portail-presty-v20-2-ghl-sync",
+  "version": "20.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
