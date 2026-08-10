@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server';import {metaFetch,requireMetaAccess} from '@/lib/meta';
+export const dynamic='force-dynamic';
+export async function GET(req){try{const q=new URL(req.url).searchParams,institutId=q.get('institutId')||'',accountId=q.get('accountId')||'';await requireMetaAccess(institutId);if(!accountId)return NextResponse.json({error:'Compte publicitaire manquant'},{status:400});const act=accountId.startsWith('act_')?accountId:`act_${accountId}`;const j=await metaFetch(`${act}/campaigns`,{fields:'id,name,status,effective_status,objective,start_time,stop_time',limit:200});return NextResponse.json({campaigns:j.data||[]});}catch(e){return NextResponse.json({error:e.message},{status:e.status||500})}}
