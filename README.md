@@ -26,3 +26,12 @@ Le webhook existant `/api/webhook/ghl` et `GHL_WEBHOOK_SECRET` restent inchangé
 - Côté client, l’onglet est renommé Synchronisations et ne permet plus de choisir les comptes.
 - OAuth GHL agence corrigé : token Company, récupération des locations installées, échange en tokens Location.
 - Scopes HighLevel supplémentaires requis : oauth.readonly et oauth.write.
+
+## V20 — GoHighLevel agence centralisé
+
+- Le compte agence HighLevel est autorisé une seule fois via OAuth Marketplace.
+- Le token `Company` et son refresh token restent côté serveur ; ils ne sont jamais renvoyés au navigateur.
+- Les sous-comptes où Presty CRM est installé sont récupérés avec l'API OAuth HighLevel puis deviennent attribuables dans Admin → Comptes clients → Configurer.
+- Un token `Location` est généré côté serveur pour chaque sous-compte nécessaire.
+- Après l'initialisation unique, l'admin utilise uniquement « Rafraîchir les sous-comptes ».
+- Variables requises : `GHL_CLIENT_ID`, `GHL_CLIENT_SECRET`. Variable optionnelle : `GHL_REDIRECT_URI`.

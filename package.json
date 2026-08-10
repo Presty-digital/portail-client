@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v19-4-ghl-admin-oauth",
-  "version": "19.4.0",
+  "name": "portail-presty-v20-ghl-agency-token",
+  "version": "20.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
