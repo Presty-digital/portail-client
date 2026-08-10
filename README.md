@@ -1,22 +1,20 @@
-# Portail Presty V19 — GHL OAuth agence
+# Portail Presty — V18
 
-V19 corrige la redirection OAuth GoHighLevel et remplace le modèle de Private Integration Token par une connexion OAuth centralisée.
+## Nouveauté principale
+Synchronisation automatique des formulaires GoHighLevel.
 
-## Variables Vercel
-- `GHL_CLIENT_ID`
-- `GHL_CLIENT_SECRET`
-- `META_ACCESS_TOKEN`
-- variables Supabase déjà existantes
+- Le Location ID continue de router les webhooks entrants.
+- Un **Private Integration Token GHL** de sous-compte, avec le scope `forms.readonly`, est enregistré côté serveur depuis l’administration Presty.
+- Le token n’est jamais renvoyé dans `/api/state` et n’est pas exposé aux comptes clients.
+- `Paramètres → Intégrations → GoHighLevel` récupère automatiquement les formulaires du sous-compte.
+- Les catégories CRM restent configurables dans Presty et sont conservées lors des resynchronisations.
+- Le mapping **Campagne Meta → Formulaire GHL** utilise directement la liste synchronisée.
 
-## Redirect URL HighLevel
-`https://portail-client-brown.vercel.app/api/integrations/crm/callback`
+## Configuration GHL
+Pour chaque sous-compte GHL :
+1. créer un Private Integration Token au niveau du sous-compte ;
+2. lui donner au minimum le scope `forms.readonly` ;
+3. dans Presty, compte admin → Configurer le client → GoHighLevel, renseigner le Location ID et le token ;
+4. ouvrir l’espace client → Paramètres : les formulaires sont synchronisés automatiquement. Le bouton « Synchroniser les formulaires » permet de forcer une actualisation.
 
-## Flux GHL
-1. Installer Presty CRM depuis le lien de test/installation HighLevel sur un sous-compte autorisé.
-2. HighLevel redirige vers `/api/integrations/crm/callback?code=...`.
-3. Le serveur échange le code contre access/refresh tokens et les conserve dans Supabase, jamais dans le navigateur.
-4. Admin Presty → Paramètres → Intégrations affiche l’état OAuth.
-5. Admin Presty → Comptes clients → Configurer permet d’attribuer uniquement un sous-compte GHL déjà autorisé.
-6. Le compte client peut ensuite synchroniser ses formulaires sans voir de token ni les autres sous-comptes.
-
-Les access tokens expirés sont renouvelés automatiquement via le refresh token.
+Le webhook existant `/api/webhook/ghl` et `GHL_WEBHOOK_SECRET` restent inchangés.
