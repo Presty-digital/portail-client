@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v19-1-ghl-oauth",
-  "version": "19.1.0",
+  "name": "portail-presty-v19-2-admin-integrations",
+  "version": "19.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

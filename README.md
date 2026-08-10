@@ -18,3 +18,11 @@ Pour chaque sous-compte GHL :
 4. ouvrir l’espace client → Paramètres : les formulaires sont synchronisés automatiquement. Le bouton « Synchroniser les formulaires » permet de forcer une actualisation.
 
 Le webhook existant `/api/webhook/ghl` et `GHL_WEBHOOK_SECRET` restent inchangés.
+
+
+## V19.2 — architecture intégrations
+- Connexions globales GHL/Meta uniquement côté administration Presty.
+- Attribution GHL + Meta depuis Comptes clients → Configurer.
+- Côté client, l’onglet est renommé Synchronisations et ne permet plus de choisir les comptes.
+- OAuth GHL agence corrigé : token Company, récupération des locations installées, échange en tokens Location.
+- Scopes HighLevel supplémentaires requis : oauth.readonly et oauth.write.
