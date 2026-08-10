@@ -9,8 +9,9 @@ function popupResponse(origin,{ok,message}){
   return new Response(html,{status:ok?200:400,headers:{"Content-Type":"text/html; charset=utf-8","Cache-Control":"no-store"}});
 }
 export async function GET(req){
-  const url=new URL(req.url),code=url.searchParams.get("code"),error=url.searchParams.get("error")||url.searchParams.get("error_description");
+  const url=new URL(req.url),code=url.searchParams.get("code"),error=url.searchParams.get("error")||url.searchParams.get("error_description"),returnedState=url.searchParams.get("state")||"",cookieState=req.cookies.get("presty_ghl_oauth_state")?.value||"";
   if(error)return popupResponse(url.origin,{ok:false,message:error});
+  if(!cookieState||!returnedState||cookieState!==returnedState)return popupResponse(url.origin,{ok:false,message:"État OAuth invalide ou expiré. Relancez l’initialisation depuis Presty."});
   if(!code)return popupResponse(url.origin,{ok:false,message:"Code OAuth GoHighLevel manquant"});
   try{
     const token=normalizeToken(await exchangeAuthorizationCode(code));
