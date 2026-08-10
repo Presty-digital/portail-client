@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v20-4-integrations-actions",
-  "version": "20.4.0",
+  "name": "portail-presty-v20-5-ghl-webhook",
+  "version": "20.5.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
