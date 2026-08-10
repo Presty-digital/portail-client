@@ -220,3 +220,5 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}.app-shell,.app-main,.cont
 /* V21.1 — suivi de chaque demande/opportunité */
 .request-main-fields{margin-bottom:14px}.request-appointment{border-top:1px solid var(--line);padding-top:16px;margin-top:4px}.request-actions{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}.request-action-fields{grid-template-columns:1fr 1fr}.request-comments{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}.field-section-label{display:block;font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px}.request-comment-timeline{margin-top:12px}.commercial-tracking-card{padding:16px}.commercial-followup>.eyebrow{margin-bottom:12px;display:block}
 @media(max-width:700px){.request-action-fields{grid-template-columns:1fr}}
+
+.ads-period-picker{display:flex;align-items:end;gap:10px;flex-wrap:wrap}.ads-period-picker>label{min-width:190px}.ads-toolbar select{border:1px solid var(--line);border-radius:12px;padding:10px 38px 10px 12px;background:#fff;font:inherit;color:var(--text)}.ads-custom-dates{display:flex;align-items:end;gap:10px;flex-wrap:wrap}
