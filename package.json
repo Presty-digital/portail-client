@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v20-6-ghl-submissions",
-  "version": "20.6.0",
+  "name": "portail-presty-v20-7-ghl-form-fields",
+  "version": "20.7.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

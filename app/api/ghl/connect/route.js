@@ -8,6 +8,7 @@ const AUTHORIZE_URL="https://marketplace.gohighlevel.com/oauth/chooselocation";
 const DEFAULT_REDIRECT_URI="https://portail-client-brown.vercel.app/api/integrations/crm/callback";
 const DEFAULT_SCOPES=[
   "locations.readonly",
+  "locations/customFields.readonly",
   "forms.readonly",
   "contacts.readonly",
   "contacts.write",
