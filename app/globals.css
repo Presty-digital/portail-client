@@ -210,3 +210,6 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}.app-shell,.app-main,.cont
 .button-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;white-space:nowrap}
 .integration-action-row .sync-state{margin-left:2px}
 @media (max-width:760px){.integration-action-row{align-items:stretch}.integration-action-row .primary,.integration-action-row .ghost,.integration-action-row .button-link{width:100%}}
+
+/* V20.6 — historique des demandes / soumissions GHL */
+.form-submission-history{display:grid;gap:14px;margin-top:14px}.form-submission-card{border:1px solid var(--line,#e5e8ef);border-radius:16px;padding:16px;background:#fff}.form-submission-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px}.form-submission-head>div{display:grid;gap:3px}.form-submission-head span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7b8494}.form-submission-head strong{font-size:15px}.form-submission-head small{color:#7b8494;white-space:nowrap}
