@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v19-3-users-hotfix",
-  "version": "19.3.0",
+  "name": "portail-presty-v19-4-ghl-admin-oauth",
+  "version": "19.4.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
