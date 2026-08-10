@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v20-14-ghl-custom-fields-token-fix",
-  "version": "20.14.0",
+  "name": "portail-presty-v20-16-ghl-form-label-fallback",
+  "version": "20.16.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -15,7 +15,7 @@
   "devDependencies": {
     "typescript": "^5.9.0",
     "@types/node": "^22.0.0",
-    "@types/react": "^20.15.0",
-    "@types/react-dom": "^20.15.0"
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3"
   }
 }
