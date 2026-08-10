@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v20-7-ghl-form-fields",
-  "version": "20.7.0",
+  "name": "portail-presty-v20-8-ghl-field-labels",
+  "version": "20.8.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
