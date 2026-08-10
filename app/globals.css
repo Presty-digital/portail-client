@@ -204,3 +204,9 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}.app-shell,.app-main,.cont
 .resource-status{justify-self:end;padding:6px 9px;border-radius:999px;background:#F0F8F2;color:#277A50;font-size:11px;font-weight:700}
 @media(max-width:900px){.integration-provider-tabs{width:100%}.integration-provider-tabs button{min-width:0;flex:1}.integration-summary-grid,.integration-summary-grid.meta-summary{grid-template-columns:1fr}.integration-resource-row{grid-template-columns:1fr}.integration-resource-row code{white-space:normal;overflow-wrap:anywhere}.resource-status{justify-self:start}}
 @media(max-width:600px){.integration-provider-tabs{display:grid;grid-template-columns:1fr 1fr}.integration-provider-panel{padding:18px!important}.integration-refresh-row{align-items:stretch}.integration-refresh-row button{width:100%}.sync-state{width:100%;justify-content:center}.resource-list-head{align-items:flex-start;flex-direction:column;gap:3px}}
+
+/* V20.4 — actions externes d'administration des intégrations */
+.integration-action-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.button-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;white-space:nowrap}
+.integration-action-row .sync-state{margin-left:2px}
+@media (max-width:760px){.integration-action-row{align-items:stretch}.integration-action-row .primary,.integration-action-row .ghost,.integration-action-row .button-link{width:100%}}

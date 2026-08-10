@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v20-3-integrations-ui",
-  "version": "20.3.0",
+  "name": "portail-presty-v20-4-integrations-actions",
+  "version": "20.4.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
