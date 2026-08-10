@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v20-2-ghl-sync",
-  "version": "20.2.0",
+  "name": "portail-presty-v20-3-integrations-ui",
+  "version": "20.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

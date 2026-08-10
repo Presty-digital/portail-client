@@ -166,3 +166,41 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}.app-shell,.app-main,.cont
 .token-status-row{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
 @media(max-width:900px){.ghl-form-row.synced{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.ghl-form-row.synced{grid-template-columns:1fr}}
+
+/* V20.3 — intégrations admin clarifiées */
+.agency-integrations{display:grid;gap:14px;min-width:0}
+.integration-provider-tabs{display:flex;align-items:stretch;gap:8px;padding:6px;background:#E9EDF5;border:1px solid rgba(29,30,34,.05);border-radius:16px;width:max-content;max-width:100%}
+.integration-provider-tabs button{min-width:190px;border:0;background:transparent;border-radius:12px;padding:11px 14px;text-align:left;color:#686F7D;box-shadow:none;transition:.18s}
+.integration-provider-tabs button span{display:block;font-size:14px;font-weight:700;color:inherit}
+.integration-provider-tabs button small{display:block;margin-top:3px;font-size:11px;color:#8B92A0;font-weight:600}
+.integration-provider-tabs button.active{background:#fff;color:var(--ink);box-shadow:0 4px 18px rgba(22,25,23,.06)}
+.integration-provider-tabs button.active small{color:var(--blue)}
+.integration-provider-panel{padding:26px!important}
+.integration-provider-panel .integration-settings-head{padding-bottom:22px;border-bottom:1px solid var(--line)}
+.integration-provider-panel .integration-settings-head h3{margin:5px 0 8px}
+.integration-provider-panel .integration-settings-head p{margin:0;max-width:920px;line-height:1.55}
+.integration-summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0}
+.integration-summary-grid.meta-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+.integration-summary-grid>div{display:grid;gap:5px;padding:14px 16px;border:1px solid var(--line);border-radius:13px;background:#F8F9FC}
+.integration-summary-grid span{font-size:12px;color:var(--muted)}
+.integration-summary-grid strong{font-size:15px;color:var(--ink)}
+.integration-refresh-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:22px 0 18px}
+.integration-refresh-row .primary,.integration-refresh-row .ghost{margin:0}
+.sync-state{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;font-size:12px;font-weight:700}
+.sync-state.success-state{background:#EEF8F2;color:#277A50;border:1px solid #D9EFE2}
+.sync-state.loading-state{background:#F1F4FF;color:#4455C8;border:1px solid #E0E5FF}
+.sync-state.loading-state i{width:10px;height:10px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:presty-spin .75s linear infinite}
+@keyframes presty-spin{to{transform:rotate(360deg)}}
+.integration-resource-list{overflow:hidden;border:1px solid var(--line);border-radius:15px;background:#fff;margin-top:4px}
+.resource-list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;background:#F8F9FC;border-bottom:1px solid var(--line)}
+.resource-list-head span{font-size:12px;font-weight:700;letter-spacing:.03em;color:#555C69}
+.resource-list-head small{font-size:11px;color:var(--muted)}
+.integration-resource-row{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(190px,.9fr) auto;align-items:center;gap:16px;padding:13px 15px;border-bottom:1px solid #EEF0F4}
+.integration-resource-row:last-child{border-bottom:0}
+.integration-resource-row>div{display:grid;gap:2px;min-width:0}
+.integration-resource-row strong{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.integration-resource-row small{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.integration-resource-row code{font-size:11px;color:#626978;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.resource-status{justify-self:end;padding:6px 9px;border-radius:999px;background:#F0F8F2;color:#277A50;font-size:11px;font-weight:700}
+@media(max-width:900px){.integration-provider-tabs{width:100%}.integration-provider-tabs button{min-width:0;flex:1}.integration-summary-grid,.integration-summary-grid.meta-summary{grid-template-columns:1fr}.integration-resource-row{grid-template-columns:1fr}.integration-resource-row code{white-space:normal;overflow-wrap:anywhere}.resource-status{justify-self:start}}
+@media(max-width:600px){.integration-provider-tabs{display:grid;grid-template-columns:1fr 1fr}.integration-provider-panel{padding:18px!important}.integration-refresh-row{align-items:stretch}.integration-refresh-row button{width:100%}.sync-state{width:100%;justify-content:center}.resource-list-head{align-items:flex-start;flex-direction:column;gap:3px}}

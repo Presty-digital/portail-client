@@ -90,10 +90,27 @@ function Settings({state,iid,admin,user,save}){
 }
 
 function AgencyIntegrationSettings({state}){
- const[ghl,setGhl]=useState({connected:false,locations:[],error:'',syncError:'',needsAuthorization:true,status:{}}),[meta,setMeta]=useState({accounts:[],error:''}),[loading,setLoading]=useState(false);
- async function refreshGhl(force=true){try{const g=await api(`/api/ghl/locations${force?'?sync=1':'?sync=0'}`);setGhl({connected:Boolean(g.connected),locations:g.locations||[],error:'',syncError:g.syncError||'',needsAuthorization:Boolean(g.needsAuthorization),status:g.status||{}})}catch(e){setGhl(v=>({...v,locations:[],error:e.message||'Connexion GoHighLevel impossible'}))}}
- async function refreshMeta(){try{const m=await api('/api/meta/ad-accounts');setMeta({accounts:m.accounts||[],error:''})}catch(e){setMeta({accounts:[],error:e.message})}}
- async function refreshAll(){setLoading(true);await Promise.allSettled([refreshGhl(false),refreshMeta()]);setLoading(false)}
+ const[provider,setProvider]=useState('ghl');
+ const[ghl,setGhl]=useState({connected:false,locations:[],error:'',syncError:'',needsAuthorization:true,status:{}}),[meta,setMeta]=useState({accounts:[],error:''});
+ const[ghlLoading,setGhlLoading]=useState(false),[metaLoading,setMetaLoading]=useState(false),[ghlSaved,setGhlSaved]=useState(''),[metaSaved,setMetaSaved]=useState('');
+ async function refreshGhl(force=true,{silent=false}={}){
+  try{
+   if(!silent){setGhlLoading(true);setGhlSaved('')}
+   const g=await api(`/api/ghl/locations${force?'?sync=1':'?sync=0'}`);
+   setGhl({connected:Boolean(g.connected),locations:g.locations||[],error:'',syncError:g.syncError||'',needsAuthorization:Boolean(g.needsAuthorization),status:g.status||{}});
+   if(!silent&&force&&!g.syncError)setGhlSaved(`${(g.locations||[]).length} sous-compte${(g.locations||[]).length>1?'s':''} synchronisé${(g.locations||[]).length>1?'s':''}`)
+  }catch(e){setGhl(v=>({...v,locations:[],error:e.message||'Connexion GoHighLevel impossible'}))}
+  finally{if(!silent)setGhlLoading(false)}
+ }
+ async function refreshMeta({silent=false}={}){
+  try{
+   if(!silent){setMetaLoading(true);setMetaSaved('')}
+   const m=await api('/api/meta/ad-accounts');setMeta({accounts:m.accounts||[],error:''});
+   if(!silent)setMetaSaved(`${(m.accounts||[]).length} compte${(m.accounts||[]).length>1?'s':''} publicitaire${(m.accounts||[]).length>1?'s':''} synchronisé${(m.accounts||[]).length>1?'s':''}`)
+  }catch(e){setMeta({accounts:[],error:e.message})}
+  finally{if(!silent)setMetaLoading(false)}
+ }
+ async function refreshAll(){await Promise.allSettled([refreshGhl(false,{silent:true}),refreshMeta({silent:true})])}
  function initialiseGhl(){
   setGhl(v=>({...v,error:'',syncError:''}));
   const popup=window.open('/api/ghl/connect','presty-ghl-bootstrap','popup=yes,width=1180,height=820,resizable=yes,scrollbars=yes');
@@ -103,18 +120,27 @@ function AgencyIntegrationSettings({state}){
  useEffect(()=>{refreshAll()},[]);
  useEffect(()=>{const onMessage=async e=>{if(e.origin!==window.location.origin||e.data?.type!=='presty-ghl-oauth')return;if(!e.data.ok)setGhl(v=>({...v,error:e.data.message||'Connexion GoHighLevel impossible'}));await refreshGhl(true)};window.addEventListener('message',onMessage);return()=>window.removeEventListener('message',onMessage)},[]);
  const status=ghl.status||{};
- return <>
-  <section className="panel"><div className="integration-settings-head"><div><span className="eyebrow">INTÉGRATION AGENCE</span><h3>GoHighLevel</h3><p className="muted">Un seul accès agence est conservé côté serveur par Presty. Une fois initialisé, vous n’avez plus à reconnecter GoHighLevel client par client : vous installez Presty CRM sur les sous-comptes voulus dans HighLevel, puis vous les rafraîchissez ici.</p></div><span className="soft-badge">{ghl.connected?'Connecté':'Initialisation requise'}</span></div>
-  {ghl.error&&<div className="alert error">{ghl.error}</div>}{ghl.syncError&&<div className="alert error">Accès agence actif, mais HighLevel signale : {ghl.syncError}</div>}
-  <div className="info-list"><span>Credentials serveur <b>{status.credentialsConfigured?'Configurés':'À vérifier'}</b></span><span>Token agence sécurisé <b>{ghl.connected?'Actif':'Absent'}</b></span><span>Sous-comptes disponibles <b>{ghl.locations.length}</b></span></div>
-  {!ghl.connected&&<div className="ghl-location-note"><span>À faire une seule fois</span><strong>Le Client ID et le Client Secret ne remplacent pas l’autorisation OAuth. Presty doit recevoir une fois un token Company via l’installation HighLevel. Cliquez sur « Initialiser l’accès agence » : Presty ouvre directement l’écran d’autorisation OAuth HighLevel. Autorisez l’accès avec votre compte agence ; HighLevel renverra ensuite automatiquement le code à Presty, qui enregistrera le token Company côté serveur. Cette opération n’est nécessaire qu’une seule fois.</strong></div>}
-  {ghl.connected&&status.companyId&&<div className="ghl-location-note"><span>Agence HighLevel</span><strong>{status.companyId} · token {status.userType||'Company'}{status.isBulkInstallation?' · installation bulk':''}</strong></div>}
-  <div className="mapping-savebar">{!ghl.connected&&<button className="primary" onClick={initialiseGhl}>Initialiser l’accès agence (1 fois)</button>}<button className={ghl.connected?'primary':'ghost'} onClick={()=>refreshGhl(true)} disabled={loading}>{loading?'Rafraîchissement…':'Rafraîchir les sous-comptes'}</button></div>
-  {ghl.connected&&ghl.locations.length===0&&!ghl.syncError&&<div className="ghl-location-note"><span>Aucun sous-compte remonté</span><strong>Installez Presty CRM sur les sous-comptes voulus depuis HighLevel, puis cliquez sur « Rafraîchir les sous-comptes ».</strong></div>}
-  {ghl.locations.length>0&&<div className="ghl-form-list">{ghl.locations.map(x=><div className="ghl-form-row synced" key={x.id}><div><label>Sous-compte</label><div className="readonly-field">{x.name||x.id}</div></div><div><label>Location ID</label><div className="readonly-field mono">{x.id}</div></div><div><label>Accès</label><div className="readonly-field">Disponible</div></div></div>)}</div>}
-  </section>
-  <section className="panel"><div className="integration-settings-head"><div><span className="eyebrow">INTÉGRATION AGENCE</span><h3>Meta Ads</h3><p className="muted">Le token agence est sécurisé côté serveur. Les comptes publicitaires disponibles sont attribués client par client depuis « Comptes clients » → « Configurer ».</p></div><span className="soft-badge">{meta.accounts.length?'Connecté':'À vérifier'}</span></div>{meta.error&&<div className="alert error">{meta.error}</div>}<div className="info-list"><span>Comptes publicitaires disponibles <b>{meta.accounts.length}</b></span></div><button className="ghost" onClick={refreshMeta} disabled={loading}>Rafraîchir Meta</button></section>
- </>
+ return <div className="agency-integrations">
+  <div className="integration-provider-tabs" role="tablist" aria-label="Intégrations agence">
+   <button type="button" className={provider==='ghl'?'active':''} onClick={()=>setProvider('ghl')}><span>GoHighLevel</span><small>{ghl.connected?`${ghl.locations.length} sous-compte${ghl.locations.length>1?'s':''}`:'À initialiser'}</small></button>
+   <button type="button" className={provider==='meta'?'active':''} onClick={()=>setProvider('meta')}><span>Meta Ads</span><small>{meta.accounts.length?`${meta.accounts.length} compte${meta.accounts.length>1?'s':''}`:'À vérifier'}</small></button>
+  </div>
+  {provider==='ghl'&&<section className="panel integration-provider-panel"><div className="integration-settings-head"><div><span className="eyebrow">INTÉGRATION AGENCE</span><h3>GoHighLevel</h3><p className="muted">Le token agence reste sécurisé côté serveur. Installez Presty CRM sur les sous-comptes voulus dans HighLevel, puis synchronisez ici la liste disponible pour l’attribution aux clients.</p></div><span className="soft-badge">{ghl.connected?'Connecté':'Initialisation requise'}</span></div>
+   {ghl.error&&<div className="alert error">{ghl.error}</div>}{ghl.syncError&&<div className="alert error">Accès agence actif, mais HighLevel signale : {ghl.syncError}</div>}
+   <div className="integration-summary-grid"><div><span>Credentials serveur</span><strong>{status.credentialsConfigured?'Configurés':'À vérifier'}</strong></div><div><span>Token agence sécurisé</span><strong>{ghl.connected?'Actif':'Absent'}</strong></div><div><span>Sous-comptes disponibles</span><strong>{ghl.locations.length}</strong></div></div>
+   {!ghl.connected&&<div className="ghl-location-note"><span>À faire une seule fois</span><strong>Initialisez l’accès agence OAuth afin que Presty puisse conserver le token Company côté serveur. Cette opération n’est nécessaire qu’une seule fois.</strong></div>}
+   {ghl.connected&&status.companyId&&<div className="ghl-location-note"><span>Agence HighLevel</span><strong>{status.companyId} · token {status.userType||'Company'}{status.isBulkInstallation?' · installation bulk':''}</strong></div>}
+   <div className="integration-refresh-row">{!ghl.connected&&<button className="primary" onClick={initialiseGhl}>Initialiser l’accès agence (1 fois)</button>}<button className={ghl.connected?'primary':'ghost'} onClick={()=>refreshGhl(true)} disabled={ghlLoading}>{ghlLoading?'Synchronisation…':'Rafraîchir les sous-comptes'}</button>{ghlLoading&&<span className="sync-state loading-state"><i/>Mise à jour en cours…</span>}{!ghlLoading&&ghlSaved&&<span className="sync-state success-state">✓ {ghlSaved}</span>}</div>
+   {ghl.connected&&ghl.locations.length===0&&!ghl.syncError&&<div className="ghl-location-note"><span>Aucun sous-compte remonté</span><strong>Installez Presty CRM sur les sous-comptes voulus depuis HighLevel, puis cliquez sur « Rafraîchir les sous-comptes ».</strong></div>}
+   {ghl.locations.length>0&&<div className="integration-resource-list"><div className="resource-list-head"><span>Sous-comptes synchronisés</span><small>{ghl.locations.length} disponible{ghl.locations.length>1?'s':''}</small></div>{ghl.locations.map(x=><div className="integration-resource-row" key={x.id}><div><strong>{x.name||x.id}</strong>{x.address&&<small>{x.address}</small>}</div><code>{x.id}</code><span className="resource-status">Disponible</span></div>)}</div>}
+  </section>}
+  {provider==='meta'&&<section className="panel integration-provider-panel"><div className="integration-settings-head"><div><span className="eyebrow">INTÉGRATION AGENCE</span><h3>Meta Ads</h3><p className="muted">Le token agence reste sécurisé côté serveur. Synchronisez les comptes publicitaires disponibles puis attribuez-les client par client depuis « Comptes clients » → « Configurer ».</p></div><span className="soft-badge">{meta.accounts.length?'Connecté':'À vérifier'}</span></div>
+   {meta.error&&<div className="alert error">{meta.error}</div>}
+   <div className="integration-summary-grid meta-summary"><div><span>Token serveur</span><strong>{meta.accounts.length?'Actif':'À vérifier'}</strong></div><div><span>Comptes publicitaires disponibles</span><strong>{meta.accounts.length}</strong></div></div>
+   <div className="integration-refresh-row"><button className="primary" onClick={()=>refreshMeta()} disabled={metaLoading}>{metaLoading?'Synchronisation…':'Rafraîchir les comptes Meta'}</button>{metaLoading&&<span className="sync-state loading-state"><i/>Mise à jour en cours…</span>}{!metaLoading&&metaSaved&&<span className="sync-state success-state">✓ {metaSaved}</span>}</div>
+   {meta.accounts.length>0&&<div className="integration-resource-list"><div className="resource-list-head"><span>Comptes publicitaires synchronisés</span><small>{meta.accounts.length} disponible{meta.accounts.length>1?'s':''}</small></div>{meta.accounts.map(x=><div className="integration-resource-row" key={x.id}><div><strong>{x.name||x.id}</strong>{x.business&&<small>{x.business}</small>}</div><code>{x.id}</code><span className="resource-status">Disponible</span></div>)}</div>}
+  </section>}
+ </div>
 }
 function CompanySettings({client,state,save}){const[f,setF]=useState({name:client?.companyName||client?.name||'',ville:client?.ville||'',email:client?.email||'',telephone:client?.telephone||'',address:client?.address||'',website:client?.website||''}),[msg,setMsg]=useState('');async function submit(){await save({...state,instituts:state.instituts.map(i=>i.id===client.id?{...i,...f,companyName:f.name,name:f.name}:i)});setMsg('Informations enregistrées.')}return <section className="panel"><span className="eyebrow">COMPTE ENTREPRISE</span><h3>{f.name}</h3><div className="form-grid"><Field label="Nom de l’entreprise" value={f.name} onChange={v=>setF({...f,name:v})}/><Field label="Ville" value={f.ville} onChange={v=>setF({...f,ville:v})}/><Field label="Email" value={f.email} onChange={v=>setF({...f,email:v})}/><Field label="Téléphone" value={f.telephone} onChange={v=>setF({...f,telephone:v})}/><Field label="Adresse" value={f.address} onChange={v=>setF({...f,address:v})}/><Field label="Site internet" value={f.website} onChange={v=>setF({...f,website:v})}/></div>{msg&&<div className="alert success">{msg}</div>}<div className="settings-savebar"><button className="primary" onClick={submit}>Enregistrer</button></div></section>}
 function UserSettings({user}){const[currentPassword,setCurrent]=useState(''),[newPassword,setNew]=useState(''),[msg,setMsg]=useState(''),[err,setErr]=useState('');async function change(){try{setErr('');await api('/api/auth/change-password',{method:'POST',body:JSON.stringify({currentPassword,newPassword})});setMsg('Mot de passe modifié.');setCurrent('');setNew('')}catch(e){setErr(e.message)}}return <section className="panel"><span className="eyebrow">UTILISATEUR</span><h3>{user.name}</h3><div className="info-list"><span>Email <b>{user.email}</b></span><span>Type d’accès <b>{user.role==='setter'?'Setter':'Client'}</b></span></div><div className="settings-password"><Field label="Mot de passe actuel" type="password" value={currentPassword} onChange={setCurrent}/><Field label="Nouveau mot de passe" type="password" value={newPassword} onChange={setNew}/></div>{err&&<div className="alert error">{err}</div>}{msg&&<div className="alert success">{msg}</div>}<button className="primary" onClick={change}>Modifier le mot de passe</button></section>}
