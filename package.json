@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v21-multi-categories",
-  "version": "21.0.0",
+  "name": "portail-presty-v21-4-meta-diagnostic",
+  "version": "21.4.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

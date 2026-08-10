@@ -3,7 +3,7 @@ import {useEffect,useMemo,useRef,useState} from "react";
 import {ACTION_TYPES,DEFAULT_PIPELINE,getClientCategories,getClientPipeline,getClientPipelineConfig,nowIso,today,uid} from "@/lib/state";
 import {metrics,euro,metricsRange} from "@/lib/stats";
 
-const api=async(url,opt={})=>{const r=await fetch(url,{headers:{"Content-Type":"application/json"},...opt});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||"Une erreur est survenue");return j};
+const api=async(url,opt={})=>{const r=await fetch(url,{headers:{"Content-Type":"application/json"},...opt});const j=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(j.error||"Une erreur est survenue");e.details=j.details||null;e.status=r.status;throw e}return j};
 const fmtDate=v=>v?new Date(v).toLocaleDateString("fr-FR",{weekday:"short",day:"2-digit",month:"short",year:"numeric"}):"—";
 const fmtDateTime=v=>v?new Date(v).toLocaleString("fr-FR",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"—";
 const cleanInfoKey=k=>String(k||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
@@ -124,7 +124,7 @@ function Settings({state,iid,admin,user,save}){
 
 function AgencyIntegrationSettings({state}){
  const[provider,setProvider]=useState('ghl');
- const[ghl,setGhl]=useState({connected:false,locations:[],error:'',syncError:'',needsAuthorization:true,status:{}}),[meta,setMeta]=useState({accounts:[],error:''});
+ const[ghl,setGhl]=useState({connected:false,locations:[],error:'',syncError:'',needsAuthorization:true,status:{}}),[meta,setMeta]=useState({accounts:[],error:'',details:null});
  const[ghlLoading,setGhlLoading]=useState(false),[metaLoading,setMetaLoading]=useState(false),[ghlSaved,setGhlSaved]=useState(''),[metaSaved,setMetaSaved]=useState('');
  async function refreshGhl(force=true,{silent=false}={}){
   try{
@@ -138,9 +138,9 @@ function AgencyIntegrationSettings({state}){
  async function refreshMeta({silent=false}={}){
   try{
    if(!silent){setMetaLoading(true);setMetaSaved('')}
-   const m=await api('/api/meta/ad-accounts');setMeta({accounts:m.accounts||[],error:''});
+   const m=await api('/api/meta/ad-accounts');setMeta({accounts:m.accounts||[],error:'',details:m.diagnostic||null});
    if(!silent)setMetaSaved(`${(m.accounts||[]).length} compte${(m.accounts||[]).length>1?'s':''} publicitaire${(m.accounts||[]).length>1?'s':''} synchronisé${(m.accounts||[]).length>1?'s':''}`)
-  }catch(e){setMeta({accounts:[],error:e.message})}
+  }catch(e){setMeta({accounts:[],error:e.message,details:e.details||null})}
   finally{if(!silent)setMetaLoading(false)}
  }
  async function refreshAll(){await Promise.allSettled([refreshGhl(false,{silent:true}),refreshMeta({silent:true})])}
@@ -167,7 +167,7 @@ function AgencyIntegrationSettings({state}){
    {ghl.locations.length>0&&<div className="integration-resource-list"><div className="resource-list-head"><span>Sous-comptes synchronisés</span><small>{ghl.locations.length} disponible{ghl.locations.length>1?'s':''}</small></div>{ghl.locations.map(x=><div className="integration-resource-row" key={x.id}><div><strong>{x.name||x.id}</strong>{x.address&&<small>{x.address}</small>}</div><code>{x.id}</code><span className="resource-status">Disponible</span></div>)}</div>}
   </section>}
   {provider==='meta'&&<section className="panel integration-provider-panel"><div className="integration-settings-head"><div><span className="eyebrow">INTÉGRATION AGENCE</span><h3>Meta Ads</h3><p className="muted">Le token agence reste sécurisé côté serveur. Synchronisez les comptes publicitaires disponibles puis attribuez-les client par client depuis « Comptes clients » → « Configurer ».</p></div><span className="soft-badge">{meta.accounts.length?'Connecté':'À vérifier'}</span></div>
-   {meta.error&&<div className="alert error">{meta.error}</div>}
+   {meta.error&&<><div className="alert error">{meta.error}</div>{meta.details&&<div className="meta-diagnostic-card"><div className="meta-diagnostic-title"><strong>Diagnostic Meta</strong><span>Informations techniques pour identifier le blocage</span></div><div className="meta-diagnostic-grid"><div><span>Statut HTTP</span><b>{meta.details.httpStatus||'—'}</b></div><div><span>Code Meta</span><b>{meta.details.code??'—'}</b></div><div><span>Sous-code</span><b>{meta.details.errorSubcode??'—'}</b></div><div><span>Type</span><b>{meta.details.type||'—'}</b></div><div><span>Version Graph</span><b>{meta.details.graphVersion||'—'}</b></div><div><span>Token Vercel</span><b>{meta.details.tokenConfigured?'Présent':'Absent'}</b></div></div>{meta.details.errorUserTitle&&<div className="meta-diagnostic-message"><span>{meta.details.errorUserTitle}</span><strong>{meta.details.errorUserMessage||meta.details.rawMessage}</strong></div>}{meta.details.fbtraceId&&<div className="meta-diagnostic-trace">FB Trace ID : <code>{meta.details.fbtraceId}</code></div>}</div>}</>}
    <div className="integration-summary-grid meta-summary"><div><span>Token serveur</span><strong>{meta.accounts.length?'Actif':'À vérifier'}</strong></div><div><span>Comptes publicitaires disponibles</span><strong>{meta.accounts.length}</strong></div></div>
    <div className="integration-refresh-row integration-action-row"><button className="primary" onClick={()=>refreshMeta()} disabled={metaLoading}>{metaLoading?'Synchronisation…':'Rafraîchir les comptes Meta'}</button><a className="ghost button-link" href="https://business.facebook.com/latest/settings/system_users?business_id=104579552688735" target="_blank" rel="noreferrer">+ Affecter de nouveaux éléments</a>{metaLoading&&<span className="sync-state loading-state"><i/>Mise à jour en cours…</span>}{!metaLoading&&metaSaved&&<span className="sync-state success-state">✓ {metaSaved}</span>}</div>
    {meta.accounts.length>0&&<div className="integration-resource-list"><div className="resource-list-head"><span>Comptes publicitaires synchronisés</span><small>{meta.accounts.length} disponible{meta.accounts.length>1?'s':''}</small></div>{meta.accounts.map(x=><div className="integration-resource-row" key={x.id}><div><strong>{x.name||x.id}</strong>{x.business&&<small>{x.business}</small>}</div><code>{x.id}</code><span className="resource-status">Disponible</span></div>)}</div>}
