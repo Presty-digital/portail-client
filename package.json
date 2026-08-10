@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v20-8-ghl-field-labels",
-  "version": "20.8.0",
+  "name": "portail-presty-v20-10-ghl-diagnostic",
+  "version": "20.10.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
