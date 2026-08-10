@@ -7,10 +7,10 @@ export const DEFAULT_PIPELINE_CONFIG=[
  {id:"call1",label:"Appel 1",color:"#4B78D1",type:"contact"},
  {id:"call2",label:"Appel 2",color:"#5268D6",type:"contact"},
  {id:"exchange",label:"En échange",color:"#6858CC",type:"contact"},
- {id:"booked",label:"RDV fixé",color:"#2D7DBB",type:"appointment_booked"},
+ {id:"booked",label:"RDV fixé",color:"#2F9B63",type:"appointment_booked"},
  {id:"done",label:"RDV réalisé",color:"#238D73",type:"appointment_completed"},
  {id:"noshow",label:"No-show",color:"#C17B2B",type:"no_show"},
- {id:"won",label:"Gagné",color:"#27834E",type:"won"},
+ {id:"won",label:"Gagné",color:"#16C65B",type:"won"},
  {id:"lost",label:"Perdu",color:"#B74848",type:"lost"}
 ];
 export const DEFAULT_PIPELINE=DEFAULT_PIPELINE_CONFIG.map(x=>x.label);
