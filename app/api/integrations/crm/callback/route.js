@@ -19,7 +19,7 @@ export async function GET(req){
     if(String(token.userType||"").toLowerCase()!=="company")throw new Error(`HighLevel a renvoyé un token ${token.userType||"inconnu"}. Pour l’architecture Presty, l’installation doit être effectuée par l’agence afin d’obtenir un token Company unique.`);
     if(!token.companyId)throw new Error("Le token agence HighLevel ne contient pas de companyId");
     const state=await loadState();
-    state.ghlOAuth={...(state.ghlOAuth||{}),connected:true,agencyToken:{...token,userType:"Company"},lastError:"",updatedAt:new Date().toISOString()};
+    state.ghlOAuth={...(state.ghlOAuth||{}),connected:true,agencyToken:{...token,userType:"Company"},installations:[],lastError:"",lastSyncAt:"",updatedAt:new Date().toISOString()};
     await saveState(state);
     let count=0,syncWarning="";
     try{count=(await syncInstalledLocations(state,saveState)).length}catch(e){syncWarning=e.message||"Synchronisation à relancer";const fresh=await loadState();fresh.ghlOAuth={...(fresh.ghlOAuth||{}),connected:true,lastError:syncWarning,updatedAt:new Date().toISOString()};await saveState(fresh)}

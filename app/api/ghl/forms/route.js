@@ -15,7 +15,7 @@ export async function GET(req){
   if(!integration?.locationId)return NextResponse.json({error:"Aucun sous-compte GHL attribué à ce client par l’administration Presty"},{status:400});
   const token=await getValidLocationToken(state,integration.locationId,saveState);
   const url=new URL("https://services.leadconnectorhq.com/forms/");url.searchParams.set("locationId",integration.locationId);
-  const response=await fetch(url,{headers:{Accept:"application/json",Authorization:`Bearer ${token}`,Version:"2021-07-28"},cache:"no-store"});
+  const response=await fetch(url,{headers:{Accept:"application/json",Authorization:`Bearer ${token}`,Version:"v3"},cache:"no-store"});
   const body=await response.json().catch(()=>({}));
   if(!response.ok){const msg=Array.isArray(body?.message)?body.message.join(", "):body?.message||body?.error||`Erreur GHL (${response.status})`;return NextResponse.json({error:msg},{status:response.status})}
   return NextResponse.json({forms:extractForms(body),locationId:integration.locationId});

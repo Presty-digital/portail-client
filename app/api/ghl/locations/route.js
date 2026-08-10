@@ -6,7 +6,7 @@ export const dynamic="force-dynamic";
 async function locationDetails(state,item){
   try{
     const token=await getValidLocationToken(state,item.locationId,saveState);
-    const r=await fetch(`https://services.leadconnectorhq.com/locations/${encodeURIComponent(item.locationId)}`,{headers:{Accept:"application/json",Authorization:`Bearer ${token}`,Version:"2021-07-28"},cache:"no-store"});
+    const r=await fetch(`https://services.leadconnectorhq.com/locations/${encodeURIComponent(item.locationId)}`,{headers:{Accept:"application/json",Authorization:`Bearer ${token}`,Version:"v3"},cache:"no-store"});
     const b=await r.json().catch(()=>({})),loc=b?.location||b;
     if(r.ok)return{id:item.locationId,name:loc?.name||loc?.companyName||item.locationName||item.locationId,address:[loc?.address,loc?.city].filter(Boolean).join(", "),companyId:item.companyId||"",userType:"Location"};
   }catch{}
