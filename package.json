@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v17-meta",
-  "version": "17.1.0",
+  "name": "portail-presty-v19-ghl-oauth",
+  "version": "19.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

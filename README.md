@@ -1,16 +1,22 @@
-# Portail Presty V16
+# Portail Presty V19 — GHL OAuth agence
 
-V16 ajoute :
-- nettoyage et déduplication des métadonnées GoHighLevel dans les fiches contact ;
-- archivage, réactivation et suppression définitive sécurisée des comptes clients ;
-- exports CSV depuis Contacts et CRM, limités au compte et aux filtres actuellement affichés.
+V19 corrige la redirection OAuth GoHighLevel et remplace le modèle de Private Integration Token par une connexion OAuth centralisée.
 
-La structure Supabase `app_state` existante est conservée : aucune migration SQL manuelle n'est requise.
+## Variables Vercel
+- `GHL_CLIENT_ID`
+- `GHL_CLIENT_SECRET`
+- `META_ACCESS_TOKEN`
+- variables Supabase déjà existantes
 
+## Redirect URL HighLevel
+`https://portail-client-brown.vercel.app/api/integrations/crm/callback`
 
-## V17 Meta Ads
-- Connexion serveur à la Marketing API via `META_ACCESS_TOKEN`.
-- Sélection d’un compte publicitaire Meta par compte client.
-- Liste des campagnes et mapping campagne Meta → formulaire GHL.
-- Onglet Publicité : dépenses, leads Meta, CPL, impressions, clics et CTR par période.
-- Le token Meta n’est jamais exposé au navigateur.
+## Flux GHL
+1. Installer Presty CRM depuis le lien de test/installation HighLevel sur un sous-compte autorisé.
+2. HighLevel redirige vers `/api/integrations/crm/callback?code=...`.
+3. Le serveur échange le code contre access/refresh tokens et les conserve dans Supabase, jamais dans le navigateur.
+4. Admin Presty → Paramètres → Intégrations affiche l’état OAuth.
+5. Admin Presty → Comptes clients → Configurer permet d’attribuer uniquement un sous-compte GHL déjà autorisé.
+6. Le compte client peut ensuite synchroniser ses formulaires sans voir de token ni les autres sous-comptes.
+
+Les access tokens expirés sont renouvelés automatiquement via le refresh token.
