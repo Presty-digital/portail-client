@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v20-17-ghl-question-labels",
-  "version": "20.17.0",
+  "name": "portail-presty-v21-multi-categories",
+  "version": "21.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

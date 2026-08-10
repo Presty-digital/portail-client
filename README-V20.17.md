@@ -1,6 +1,12 @@
-# Presty CRM V20.17
+# Presty CRM V21.0
 
-Correction ciblée des libellés de questions GHL :
-- le libellé visible dans le formulaire public prime désormais sur le nom interne du Custom Field ;
-- les valeurs de réponses (ex. Ventre, Sport, 1 à 3 ans) sont exclues des candidats de libellé ;
-- aucun changement de design ni de logique CRM.
+Évolution du CRM autour d'un contact unique pouvant avoir plusieurs catégories CRM.
+
+- Les catégories proviennent uniquement de Paramètres → CRM et des associations formulaires → catégories dans Synchronisations.
+- Une nouvelle soumission GHL ajoute sa catégorie sans écraser les précédentes.
+- Chaque catégorie possède son suivi commercial indépendant (statut + valeur).
+- Le CRM affiche une opportunité par couple contact × catégorie ; un même contact peut donc apparaître dans plusieurs catégories/pipelines.
+- La fiche contact affiche les badges de catégories, les coordonnées et un bloc de suivi commercial par catégorie.
+- Le nom du formulaire est conservé uniquement dans l'historique des soumissions.
+- La logique GHL validée en V20.17 pour les vraies questions/réponses est conservée.
+- Les statistiques de CA tiennent compte des ventes par catégorie.
