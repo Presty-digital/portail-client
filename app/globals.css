@@ -283,3 +283,17 @@ html,body{height:100%;overflow:hidden}
 .settings-fixed-page .fixed-page-body{padding-top:0}
 .settings-fixed-page .settings-layout{padding-bottom:34px}
 @media(max-width:960px){.settings-fixed-page .settings-layout{padding-bottom:calc(28px + env(safe-area-inset-bottom))}}
+
+/* V21.6.2 — Settings: only content card scrolls; tabs stay fixed */
+.settings-fixed-page .fixed-page-body{overflow:hidden;padding-bottom:0}
+.settings-fixed-page .settings-layout{height:100%;min-height:0;align-items:stretch}
+.settings-fixed-page .settings-nav{height:max-content;position:sticky;top:0;align-self:start}
+.settings-fixed-page .settings-content{height:100%;min-height:0;overflow-y:auto;overflow-x:hidden;padding:0 4px 28px 0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-gutter:stable}
+/* Pipeline separator belongs to the complete stage (row + threshold control), not between them */
+.pipeline-edit-row{border-bottom:0}
+.milestone-button{margin:0 0 0 0}
+.milestone-button + .pipeline-milestone{}
+.pipeline-editor .milestone-button{margin-bottom:12px}
+.pipeline-editor .milestone-button:not(:last-child){position:relative}
+.pipeline-editor .milestone-button:not(:last-child)::after{content:"";position:absolute;left:0;right:auto;bottom:-13px;width:calc(100vw - 420px);max-width:1120px;height:1px;background:#F0F2F6;pointer-events:none}
+@media(max-width:1100px){.settings-fixed-page .settings-layout{display:flex;flex-direction:column}.settings-fixed-page .settings-nav{position:relative;flex:none}.settings-fixed-page .settings-content{flex:1;height:auto;min-height:0}.pipeline-editor .milestone-button:not(:last-child)::after{width:calc(100vw - 90px)}}
