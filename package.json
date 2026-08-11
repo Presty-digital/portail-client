@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v21-8-multi-actions",
-  "version": "21.8.0",
+  "name": "portail-presty-v21-9-responsive",
+  "version": "21.9.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
