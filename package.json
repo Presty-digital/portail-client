@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v21-9-responsive",
-  "version": "21.9.0",
+  "name": "portail-presty-v21-11-meta-dashboard",
+  "version": "21.11.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
