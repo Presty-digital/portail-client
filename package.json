@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v21-4-meta-diagnostic",
-  "version": "21.4.0",
+  "name": "portail-presty-v21-5-fixed-shell",
+  "version": "21.5.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
