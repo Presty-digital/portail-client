@@ -402,3 +402,56 @@ html,body{height:100%;overflow:hidden}
   .dashboard-toolbar{margin-bottom:5px!important}.dashboard-hero{padding:14px 18px!important;grid-template-columns:minmax(0,1fr) 220px!important;gap:14px!important}.dashboard-hero h1{font-size:27px!important;margin:6px 0!important}.dashboard-hero p{display:none!important}.roi-card{padding:10px 14px!important}.roi-card strong{font-size:34px!important;margin:5px 0!important}
   .clients-fixed-page .fixed-page-header .page-head>div:first-child{display:none}.clients-fixed-page .fixed-page-header .page-head{margin:0 0 6px!important}.clients-fixed-page .fixed-page-header .page-actions{width:100%}.clients-fixed-page .fixed-page-header .primary{padding:10px 14px!important}
 }
+
+/* V21.10 — filtres responsive Contacts / CRM */
+.responsive-filter-toggle,.responsive-filter-apply{display:none}
+.responsive-filter-options{display:contents}
+.active-filter-chips{display:none}
+
+@media (max-width:1100px){
+  .crm-filterbar.v21.responsive-filterbar,.directory-filters.responsive-filterbar{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    gap:8px!important;
+    overflow:visible!important;
+    max-height:none!important;
+    padding:8px!important;
+    position:relative!important;
+  }
+  .responsive-filterbar>.responsive-filter-search{
+    width:100%!important;min-width:0!important;max-width:none!important;flex:none!important;
+  }
+  .responsive-filter-toggle{
+    display:inline-flex!important;align-items:center;justify-content:center;white-space:nowrap;
+    width:auto!important;min-width:112px!important;min-height:42px!important;padding:10px 14px!important;
+  }
+  .responsive-filter-options{
+    display:none!important;grid-column:1/-1;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;
+    box-shadow:0 10px 30px rgba(22,25,23,.07)
+  }
+  .responsive-filterbar.filters-open .responsive-filter-options{display:grid!important}
+  .responsive-filter-options>*{width:100%!important;min-width:0!important;max-width:none!important;min-height:42px!important;flex:none!important}
+  .responsive-filter-reset{grid-column:auto}
+  .responsive-filter-apply{display:block!important}
+  .active-filter-chips{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;margin-top:1px}
+  .active-filter-chips button{border:0;background:#EEF2FF;color:#2941C6;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:700}
+}
+
+@media (max-width:700px){
+  .crm-filterbar.v21.responsive-filterbar,.directory-filters.responsive-filterbar{
+    grid-template-columns:minmax(0,1fr) auto!important;padding:6px 0!important;background:transparent!important;
+  }
+  .responsive-filter-toggle{min-width:102px!important;padding:9px 11px!important;font-size:13px!important}
+  .responsive-filter-options{grid-template-columns:1fr!important;padding:10px!important;border-radius:16px!important}
+  .responsive-filter-reset,.responsive-filter-apply{width:100%!important}
+  .responsive-filterbar>.responsive-filter-search{min-height:44px!important;font-size:16px!important}
+  .active-filter-chips{margin-top:0;padding:0 2px}
+}
+
+/* Les raccourcis Rendez-vous restent toujours visibles sous forme de boutons */
+@media (max-width:700px){
+  .appointment-filters{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+  .appointment-filters button{min-width:0!important;width:100%!important;padding:10px 6px!important;font-size:13px!important}
+  .appointment-filters input{grid-column:1/-1!important;width:100%!important}
+}
