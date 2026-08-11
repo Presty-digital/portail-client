@@ -297,3 +297,23 @@ html,body{height:100%;overflow:hidden}
 .pipeline-editor .milestone-button:not(:last-child){position:relative}
 .pipeline-editor .milestone-button:not(:last-child)::after{content:"";position:absolute;left:0;right:auto;bottom:-13px;width:calc(100vw - 420px);max-width:1120px;height:1px;background:#F0F2F6;pointer-events:none}
 @media(max-width:1100px){.settings-fixed-page .settings-layout{display:flex;flex-direction:column}.settings-fixed-page .settings-nav{position:relative;flex:none}.settings-fixed-page .settings-content{flex:1;height:auto;min-height:0}.pipeline-editor .milestone-button:not(:last-child)::after{width:calc(100vw - 90px)}}
+
+/* V21.7 — Synchronisations: sub-tabs sticky inside the scrollable settings card */
+.client-sync-settings{position:relative}
+.client-sync-settings .sync-provider-tabs{position:sticky;top:0;z-index:15;margin:0 0 20px;background:#E9EDF5;box-shadow:0 8px 14px rgba(238,240,246,.96)}
+.client-sync-settings .ghl-settings,.client-sync-settings .meta-settings{margin-top:0}
+@media(max-width:1100px){.client-sync-settings .sync-provider-tabs{top:0}}
+
+/* V21.7 — Contact management */
+.contact-management{border-top:1px solid var(--line);margin-top:28px;padding-top:24px}
+.contact-management h3{margin:6px 0 8px}
+.contact-management-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.danger-button{border:1px solid #f1c9cd;background:#fff6f6;color:#c7464d;border-radius:12px;padding:11px 16px;font-weight:750;cursor:pointer}
+.danger-button:hover{background:#ffeded}
+
+/* V21.7 — Actions page */
+.actions-fixed-page .actions-panel{margin-top:0}
+.actions-rdv-panel{margin-top:18px}
+.action-count{min-width:36px;text-align:center;background:#eef2ff;color:#304cff;border-radius:999px;padding:7px 11px;font-weight:800}
+.quick-actions button:disabled{opacity:.55;cursor:wait}
+@media(max-width:700px){.action-row{align-items:flex-start;flex-direction:column}.quick-actions{width:100%}.quick-actions button{flex:1}}

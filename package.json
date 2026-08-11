@@ -1,6 +1,6 @@
 {
-  "name": "portail-presty-v21-6-dashboard-commercial",
-  "version": "21.6.0",
+  "name": "portail-presty-v21-7-actions-contacts",
+  "version": "21.7.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
