@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 export const dynamic="force-dynamic";
 
 const AUTHORIZE_URL="https://marketplace.gohighlevel.com/oauth/chooselocation";
-const DEFAULT_REDIRECT_URI="https://portail-client-brown.vercel.app/api/integrations/crm/callback";
+const DEFAULT_REDIRECT_URI="https://portail-client.presty-digital.fr/api/integrations/crm/callback";
 const DEFAULT_SCOPES=[
   "locations.readonly",
   "locations/customFields.readonly",
