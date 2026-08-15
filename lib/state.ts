@@ -10,6 +10,7 @@ export const DEFAULT_PIPELINE_CONFIG=[
  {id:"booked",label:"RDV fixé",color:"#2F9B63",type:"appointment_booked"},
  {id:"done",label:"RDV réalisé",color:"#238D73",type:"appointment_completed"},
  {id:"noshow",label:"No-show",color:"#C17B2B",type:"no_show"},
+ {id:"unqualified",label:"Non qualifié",color:"#D6A91D",type:"unqualified"},
  {id:"won",label:"Gagné",color:"#16C65B",type:"won"},
  {id:"lost",label:"Perdu",color:"#B74848",type:"lost"}
 ];
@@ -22,7 +23,7 @@ export const today=()=>new Date().toISOString().slice(0,10);
 export const nowIso=()=>new Date().toISOString();
 export const emptyState=()=>({version:CURRENT_VERSION,initialized:false,users:[],instituts:[],campaigns:[],leads:[],expenses:[],reviews:[],integrations:[],notifications:[]});
 const arr=(v:any):any[]=>Array.isArray(v)?v:[];
-const statusMap:any={"Nouveau lead":"Nouveau","Nouveau":"Nouveau","Non qualifié":"Nouveau","À contacter":"Appel 1","Appel 1":"Appel 1","Appel 2":"Appel 2","En échange":"En échange","RDV fixé":"RDV fixé","RDV réalisé":"RDV réalisé","No-show":"No-show","Client converti":"Gagné","Gagné":"Gagné","Perdu":"Perdu"};
+const statusMap:any={"Nouveau lead":"Nouveau","Nouveau":"Nouveau","Non qualifié":"Non qualifié","À contacter":"Appel 1","Appel 1":"Appel 1","Appel 2":"Appel 2","En échange":"En échange","RDV fixé":"RDV fixé","RDV réalisé":"RDV réalisé","No-show":"No-show","Client converti":"Gagné","Gagné":"Gagné","Perdu":"Perdu"};
 const defaultByLabel=(label:string)=>DEFAULT_PIPELINE_CONFIG.find(x=>x.label===label);
 export function normalizeLead(x:any={}){
  const mapped=statusMap[x.statut]||x.statut||"Nouveau";

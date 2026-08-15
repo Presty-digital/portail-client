@@ -1,6 +1,6 @@
 export const euro=(n:any)=>`${Number(n||0).toLocaleString("fr-FR",{maximumFractionDigits:0})} €`;export const euros=euro;
 const configFor=(state:any,iid:any)=>state.instituts?.find((i:any)=>i.id===iid)?.pipelineConfig||[];
-const stageType=(state:any,iid:any,status:any)=>configFor(state,iid).find((s:any)=>s.label===status)?.type||({"RDV fixé":"appointment_booked","RDV réalisé":"appointment_completed","No-show":"no_show","Gagné":"won","Client converti":"won","Perdu":"lost"} as any)[status]||"prospect";
+const stageType=(state:any,iid:any,status:any)=>configFor(state,iid).find((s:any)=>s.label===status)?.type||({"RDV fixé":"appointment_booked","RDV réalisé":"appointment_completed","No-show":"no_show","Non qualifié":"unqualified","Gagné":"won","Client converti":"won","Perdu":"lost"} as any)[status]||"prospect";
 const cats=(lead:any)=>{const c=Array.isArray(lead?.categories)?lead.categories.filter(Boolean):[];return [...new Set(c.length?c:[lead?.category||'Autres'])]};
 const track=(lead:any,cat:any)=>lead?.commercialByCategory?.[cat]||{status:cat===(lead?.latestCategory||lead?.category)?lead?.statut||'Nouveau':'Nouveau',value:cat===(lead?.latestCategory||lead?.category)?Number(lead?.value||0):0,converted:cat===(lead?.latestCategory||lead?.category)?Boolean(lead?.converted):false};
 const opps=(leads:any[])=>leads.flatMap((lead:any)=>cats(lead).map((category:any)=>({lead,category,...track(lead,category)})));
