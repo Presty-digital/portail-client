@@ -483,3 +483,17 @@ html,body{height:100%;overflow:hidden}
 .contact-primary-section{padding-top:4px}
 .contact-primary-section>.eyebrow{display:block;margin-bottom:10px}
 @media(max-width:700px){.contact-drawer-intro{padding:13px}.contact-drawer-intro .contact-actions{gap:6px}}
+
+/* V21.17 — suivi des demandes clarifié */
+.contact-drawer-intro .contact-summary.v21 h2{margin-top:0}
+.commercial-tracking-card{padding:0;overflow:hidden;border-radius:18px}
+.commercial-tracking-head{padding:15px 16px;margin:0;background:#F8FAFC;border-bottom:1px solid var(--line)}
+.commercial-tracking-head>div{display:flex;align-items:center;gap:9px}.tracking-card-kicker{font-size:10px;text-transform:uppercase;letter-spacing:.11em;font-weight:800;color:var(--muted)}
+.tracking-subsection{padding:16px;border-top:1px solid var(--line);margin:0;background:#fff}.commercial-tracking-head+.tracking-subsection{border-top:0}
+.tracking-subsection-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:13px}.tracking-subsection-head>div{display:grid;gap:3px}.tracking-subsection-head strong{font-size:13px}.tracking-subsection-head span{font-size:11px;color:var(--muted);line-height:1.4}
+.status-subsection{background:#FCFCFD}.request-main-fields{margin-bottom:0}.request-appointment,.request-actions,.request-comments{margin-top:0;padding-top:16px;border-top:1px solid var(--line)}
+.action-composer{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}.action-note-field{grid-column:1/-1;display:grid;gap:6px}.action-note-field>span{font-size:11px;font-weight:650;color:var(--text)}.action-note-field textarea{width:100%;min-height:70px;resize:vertical}
+.add-action-row{grid-column:1/-1;display:flex;justify-content:center}.add-action-button{min-width:180px;margin:0}
+.request-action-item p{margin:4px 0 0;font-size:11px;color:var(--text);line-height:1.4}.request-action-item>div{min-width:0}
+.request-comments{background:#FBFCFF}.comment-composer-footer{justify-content:center}.comment-composer-footer .primary{min-width:180px}
+@media(max-width:760px){.action-composer{grid-template-columns:1fr}.action-note-field,.add-action-row{grid-column:auto}.add-action-button{width:100%}.tracking-subsection{padding:14px}.commercial-tracking-head{padding:13px 14px}}
