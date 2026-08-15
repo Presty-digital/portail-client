@@ -474,3 +474,12 @@ html,body{height:100%;overflow:hidden}
 .client-search>span{font-size:20px;color:var(--muted);line-height:1}.client-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;color:var(--ink);padding:0}.client-search input::placeholder{color:#9299a6}.client-search button{border:0;background:transparent;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;padding:4px}.client-search-empty{margin-top:0}.users-fixed-page .fixed-page-body{overflow-y:auto!important;overflow-x:hidden}.users-fixed-page .user-table{margin-top:0;margin-bottom:0}
 @media(max-width:960px){.clients-fixed-page .fixed-page-header{padding-bottom:10px}.client-search{width:100%;height:42px}.users-fixed-page .fixed-page-header{padding-bottom:10px}.users-fixed-page .fixed-page-body{padding-bottom:calc(28px + env(safe-area-inset-bottom))}}
 @media(max-width:640px){.client-search{border-radius:12px}}
+
+/* V21.16 — fiche contact : hiérarchie plus claire */
+.contact-drawer-intro{background:linear-gradient(180deg,#F8FAFF 0%,#fff 100%);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px}
+.contact-drawer-intro .contact-summary{margin-bottom:14px}
+.contact-quick-info>span{display:block;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.contact-drawer-intro .contact-identity-grid{margin-bottom:0}
+.contact-primary-section{padding-top:4px}
+.contact-primary-section>.eyebrow{display:block;margin-bottom:10px}
+@media(max-width:700px){.contact-drawer-intro{padding:13px}.contact-drawer-intro .contact-actions{gap:6px}}
