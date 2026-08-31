@@ -2,20 +2,47 @@
 
 Base : V21.19.
 
-## Diagnostic GoHighLevel
-- Ajout d’un bouton `Diagnostic` sur chaque sous-compte dans Administration > Paramètres > Intégrations > GoHighLevel.
-- Le diagnostic est filtré par `locationId` afin de n’afficher que les événements du sous-compte sélectionné.
-- Affichage des derniers événements webhook enregistrés pour le sous-compte.
-- Affichage du formulaire détecté, du contact, du Form ID et du nombre de soumissions récupérées.
-- Affichage des réponses que le CRM a réussi à interpréter.
-- Affichage des données brutes `others` des dernières soumissions GHL.
-- Affichage des erreurs de récupération de soumissions et de custom fields.
-- Section technique détaillée disponible pour investiguer les mappings de champs.
-- Si aucun diagnostic n’existe encore, l’interface demande d’envoyer un formulaire test puis de rouvrir le diagnostic.
+## GoHighLevel — reconnexion OAuth
+- Ajout d’un bouton **« Reconnecter GoHighLevel »** dans Administration Presty → Paramètres → Intégrations → GoHighLevel.
+- Le bouton relance le flux OAuth agence même lorsque le CRM affiche déjà « Connecté ».
+- Il permet de remplacer un access token / refresh token GHL devenu invalide sans supprimer les comptes clients ni leurs `locationId`.
+- Le bouton **« Rafraîchir les sous-comptes »** reste dédié à la synchronisation de la liste des sous-comptes et ne sert pas à réautoriser OAuth.
+- Aucun diagnostic de la précédente V21.20 abandonnée n’est repris dans cette version.
 
-## Sécurité
-- La route de diagnostic reste réservée aux utilisateurs `agency_admin`.
-- Les diagnostics ne sont jamais rendus disponibles dans les espaces clients.
+
+## CRM
+- Le filtre Statut devient multi-sélection.
+- Plusieurs statuts peuvent être cochés simultanément.
+- Chaque statut actif apparaît sous forme de filtre amovible.
+- Réinitialisation globale conservée.
+
+## Pipeline
+- `Non qualifié` reste un type métier natif.
+- Ajout du statut natif `Annulation` avec le type métier `cancelled`.
+- `Non qualifié` et `Annulation` sont ajoutés automatiquement aux pipelines existants s'ils sont absents, avant les étapes terminales Gagné / Perdu.
+
+## Actions
+- Refonte des cartes « Actions à traiter » avec davantage d'informations :
+  - type d'action ;
+  - date et heure ;
+  - contact ;
+  - catégorie ;
+  - statut actuel ;
+  - coordonnées ;
+  - commentaire attaché à l'action.
+- Le commentaire saisi dans la fiche contact est désormais visible directement depuis l'onglet Actions.
+
+## Rendez-vous
+- Renommage de l'onglet en « RDV à confirmer ».
+- Cartes rendez-vous enrichies : date/heure, contact, téléphone, demande et type de rendez-vous.
+- Nouvelle logique de qualification du rendez-vous :
+  - `No-show` ;
+  - `Annulé` ;
+  - `Présent`.
+- `Présent` ouvre une fenêtre de résultat commercial :
+  - `Vente réalisée` : montant obligatoire, puis passage automatique en Gagné ;
+  - `Pas de vente` : montant désactivé, valeur remise à 0, puis passage en RDV réalisé.
+- Le résultat est enregistré avec une date de confirmation.
 
 ## Déploiement
-Pack complet limité à 99 fichiers pour le workflow GitHub Web → Vercel.
+Pack complet prévu pour le workflow GitHub Web → Vercel, limité à 99 fichiers.
