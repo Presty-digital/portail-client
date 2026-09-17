@@ -1,8 +1,8 @@
-# PRESTY CRM V21.25 — GHL OAuth rotation fix
+# Presty CRM V21.26 — GHL Installed Locations Source Fix
 
-- Pagination HighLevel v3: pageSize=100 + nextPageToken.
-- OAuth token exchange uses standard snake_case fields.
-- HighLevel refresh tokens are treated as single-use.
-- Location tokens are regenerated from the Company token instead of consuming Location refresh tokens.
-- Reconnect preserves existing sub-account assignments and does not auto-sync inside the OAuth callback.
-- After reconnect, run one manual “Rafraîchir les sous-comptes”.
+- Corrige la cause du compteur incohérent (ex. 52 disponibles alors que 23 installations existent dans HighLevel).
+- `approvedLocations` du token Company n’est plus utilisé comme fallback pour les installations Marketplace.
+- Source de vérité unique : `GET /oauth/installed-locations` avec `isInstalled=true`, `pageSize=100` et pagination `nextPageToken`.
+- Lors d’une synchronisation réussie, les anciennes entrées fantômes sont marquées non installées et disparaissent de l’interface.
+- En cas d’erreur HighLevel, le CRM affiche l’erreur au lieu d’inventer une liste à partir des comptes approuvés de l’agence.
+- OAuth, webhooks, attributions clients, Supabase et flux leads inchangés.
