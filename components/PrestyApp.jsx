@@ -175,12 +175,23 @@ function AgencyIntegrationSettings({state}){
   finally{if(!silent)setMetaLoading(false)}
  }
  async function refreshAll(){await Promise.allSettled([refreshGhl(false,{silent:true}),refreshMeta({silent:true})])}
- function initialiseGhl(){
+ async function initialiseGhl(){
   setGhl(v=>({...v,error:'',syncError:''}));
   setGhlSaved('');
-  const popup=window.open('/api/ghl/connect','presty-ghl-bootstrap','popup=yes,width=1180,height=820,resizable=yes,scrollbars=yes');
+  // Ouvre d'abord une fenêtre vide (geste utilisateur), puis prépare l'URL OAuth
+  // via fetch dans la session admin courante. Cela évite le 403 observé lorsque
+  // /api/ghl/connect était ouvert directement dans une nouvelle fenêtre.
+  const popup=window.open('about:blank','presty-ghl-bootstrap','popup=yes,width=1180,height=820,resizable=yes,scrollbars=yes');
   if(!popup){setGhl(v=>({...v,error:'Votre navigateur a bloqué la fenêtre HighLevel. Autorisez les pop-up puis recommencez.'}));return}
-  popup.focus?.();
+  try{
+   const r=await fetch('/api/ghl/connect?mode=json',{credentials:'same-origin',cache:'no-store'});
+   const data=await r.json().catch(()=>({}));
+   if(!r.ok||!data.url)throw new Error(data.error||'Impossible de préparer la connexion GoHighLevel');
+   popup.location.href=data.url;popup.focus?.();
+  }catch(e){
+   try{popup.close()}catch{}
+   setGhl(v=>({...v,error:e.message||'Connexion GoHighLevel impossible'}));
+  }
  }
  useEffect(()=>{refreshAll()},[]);
  useEffect(()=>{const onMessage=async e=>{if(e.origin!==window.location.origin||e.data?.type!=='presty-ghl-oauth')return;if(!e.data.ok)setGhl(v=>({...v,error:e.data.message||'Connexion GoHighLevel impossible'}));await refreshGhl(true)};window.addEventListener('message',onMessage);return()=>window.removeEventListener('message',onMessage)},[]);

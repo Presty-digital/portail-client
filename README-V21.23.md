@@ -1,4 +1,4 @@
-# PRESTY CRM — V21.23
+# PRESTY CRM — V21.24
 
 Base : V21.22 GHL Token Recovery.
 
@@ -6,7 +6,7 @@ Base : V21.22 GHL Token Recovery.
 
 HighLevel OAuth v3 pagine désormais `GET /oauth/installed-locations` avec `pageSize` (20 par défaut) et `pageToken`. V21.22 effectuait une seule requête sans `pageSize`, ce qui limitait la liste visible dans PRESTY CRM aux 20 premières installations.
 
-V21.23 :
+V21.24 :
 - demande `pageSize=100` ;
 - suit `pagination.nextPageToken` tant qu'une page suivante existe ;
 - agrège et déduplique les sous-comptes avant la synchronisation ;
