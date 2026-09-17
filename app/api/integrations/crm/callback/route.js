@@ -1,5 +1,5 @@
 import {loadState,saveState} from "@/lib/db";
-import {exchangeAuthorizationCode,normalizeToken,syncInstalledLocations} from "@/lib/ghl-oauth";
+import {exchangeAuthorizationCode,normalizeToken} from "@/lib/ghl-oauth";
 export const dynamic="force-dynamic";
 function esc(s){return String(s||"").replace(/[<&]/g,c=>c==="<"?"&lt;":"&amp;")}
 function popupResponse(origin,{ok,message}){
@@ -19,11 +19,9 @@ export async function GET(req){
     if(String(token.userType||"").toLowerCase()!=="company")throw new Error(`HighLevel a renvoyé un token ${token.userType||"inconnu"}. Pour l’architecture Presty, l’installation doit être effectuée par l’agence afin d’obtenir un token Company unique.`);
     if(!token.companyId)throw new Error("Le token agence HighLevel ne contient pas de companyId");
     const state=await loadState();
-    state.ghlOAuth={...(state.ghlOAuth||{}),connected:true,agencyToken:{...token,userType:"Company"},installations:[],lastError:"",lastSyncAt:"",updatedAt:new Date().toISOString()};
+    state.ghlOAuth={...(state.ghlOAuth||{}),connected:true,agencyToken:{...token,userType:"Company"},installations:Array.isArray(state?.ghlOAuth?.installations)?state.ghlOAuth.installations:[],lastError:"",updatedAt:new Date().toISOString()};
     await saveState(state);
-    let count=0,syncWarning="";
-    try{count=(await syncInstalledLocations(state,saveState)).length}catch(e){syncWarning=e.message||"Synchronisation à relancer";const fresh=await loadState();fresh.ghlOAuth={...(fresh.ghlOAuth||{}),connected:true,lastError:syncWarning,updatedAt:new Date().toISOString()};await saveState(fresh)}
-    return popupResponse(url.origin,{ok:true,message:syncWarning?`Accès agence sécurisé enregistré. La synchronisation automatique a signalé : ${syncWarning}. Revenez dans Presty puis cliquez sur « Rafraîchir les sous-comptes ».`:`Accès agence sécurisé enregistré. ${count} sous-compte${count>1?"s":""} disponible${count>1?"s":""} dans Presty.`});
+    return popupResponse(url.origin,{ok:true,message:"Accès agence GoHighLevel renouvelé. Revenez dans Presty puis cliquez une seule fois sur « Rafraîchir les sous-comptes » pour récupérer toutes les installations."});
   }catch(e){
     try{const state=await loadState();state.ghlOAuth={...(state.ghlOAuth||{}),connected:Boolean(state?.ghlOAuth?.agencyToken?.accessToken),lastError:e.message||"Connexion GHL impossible",updatedAt:new Date().toISOString()};await saveState(state)}catch{}
     return popupResponse(url.origin,{ok:false,message:e.message||"Connexion GHL impossible"});
