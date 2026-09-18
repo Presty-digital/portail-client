@@ -8,7 +8,7 @@ export const dynamic="force-dynamic";
 function locationDetails(item){
   return {
     id:item.locationId,
-    name:item.locationName||item.locationId,
+    name:item.name||item.locationName||item.locationId,
     address:item.address||"",
     companyId:item.companyId||"",
     userType:"Location"

@@ -25,7 +25,12 @@ function oauthTarget(){
   const redirectUri=process.env.GHL_REDIRECT_URI||DEFAULT_REDIRECT_URI;
   const versionId=process.env.GHL_VERSION_ID||process.env.GHL_APP_VERSION_ID||process.env.GHL_APP_ID||String(clientId).split("-")[0];
   if(!versionId)throw new Error("GHL_VERSION_ID / GHL_APP_ID manquant côté serveur");
-  const scopes=(process.env.GHL_SCOPES||DEFAULT_SCOPES).trim();
+  // V21.29 — GHL_SCOPES peut encore contenir une ancienne liste dans Vercel.
+  // Ne jamais laisser cette variable supprimer les scopes OAuth indispensables
+  // au flux agence. On fusionne toujours les scopes requis par PRESTY.
+  const configured=String(process.env.GHL_SCOPES||"").split(/\s+/).filter(Boolean);
+  const required=DEFAULT_SCOPES.split(/\s+/).filter(Boolean);
+  const scopes=[...new Set([...configured,...required,"oauth.readonly","oauth.write"])].join(" ");
   const state=crypto.randomBytes(24).toString("hex");
   const target=new URL(AUTHORIZE_URL);
   target.searchParams.set("response_type","code");
