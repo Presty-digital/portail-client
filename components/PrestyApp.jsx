@@ -194,7 +194,7 @@ function AgencyIntegrationSettings({state}){
   }
  }
  useEffect(()=>{refreshAll()},[]);
- useEffect(()=>{const onMessage=async e=>{if(e.origin!==window.location.origin||e.data?.type!=='presty-ghl-oauth')return;if(!e.data.ok)setGhl(v=>({...v,error:e.data.message||'Connexion GoHighLevel impossible'}));await refreshGhl(false)};window.addEventListener('message',onMessage);return()=>window.removeEventListener('message',onMessage)},[]);
+ useEffect(()=>{const onMessage=async e=>{if(e.origin!==window.location.origin||e.data?.type!=='presty-ghl-oauth')return;if(!e.data.ok){setGhl(v=>({...v,error:e.data.message||'Connexion GoHighLevel impossible'}));return}await refreshGhl(false)};window.addEventListener('message',onMessage);return()=>window.removeEventListener('message',onMessage)},[]);
  const status=ghl.status||{};
  return <div className="agency-integrations">
   <div className="integration-provider-tabs" role="tablist" aria-label="Intégrations agence">
