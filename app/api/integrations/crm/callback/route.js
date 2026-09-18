@@ -20,7 +20,7 @@ export async function GET(req){
     if(!token.companyId)throw new Error("Le token agence HighLevel ne contient pas de companyId");
     const state=await loadState();
     state.ghlOAuth={...(state.ghlOAuth||{}),connected:true,agencyToken:{...token,userType:"Company"},installations:Array.isArray(state?.ghlOAuth?.installations)?state.ghlOAuth.installations:[],lastError:"",updatedAt:new Date().toISOString()};
-    await saveState(state);
+    await saveState(state,{allowGhlOAuthWrite:true});
     return popupResponse(url.origin,{ok:true,message:"Accès agence GoHighLevel renouvelé. Revenez dans Presty puis cliquez une seule fois sur « Rafraîchir les sous-comptes » pour récupérer toutes les installations."});
   }catch(e){
     try{const state=await loadState();state.ghlOAuth={...(state.ghlOAuth||{}),connected:Boolean(state?.ghlOAuth?.agencyToken?.accessToken),lastError:e.message||"Connexion GHL impossible",updatedAt:new Date().toISOString()};await saveState(state)}catch{}

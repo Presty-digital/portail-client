@@ -21,7 +21,7 @@ export async function GET(req){
     if(!status.connected)return NextResponse.json({connected:false,locations:[],syncError:state?.ghlOAuth?.lastError||"",needsAuthorization:true,status});
     const url=new URL(req.url),doSync=url.searchParams.get("sync")!=="0";
     let syncError="";
-    if(doSync){try{await syncInstalledLocations(state,saveState)}catch(e){syncError=e.message||"";const freshErr=await loadState();freshErr.ghlOAuth={...(freshErr.ghlOAuth||{}),connected:true,lastError:syncError,updatedAt:new Date().toISOString()};await saveState(freshErr)}}
+    if(doSync){try{await syncInstalledLocations(state,saveState)}catch(e){syncError=e.message||"";const freshErr=await loadState();freshErr.ghlOAuth={...(freshErr.ghlOAuth||{}),connected:true,lastError:syncError,updatedAt:new Date().toISOString()};await saveState(freshErr,{allowGhlOAuthWrite:true})}}
     const fresh=await loadState(),installs=oauthInstallations(fresh).filter(x=>x.locationId&&x.isInstalled!==false),locations=[];
     for(const item of installs)locations.push(locationDetails(item));
     return NextResponse.json({connected:true,locations,syncError:syncError||fresh?.ghlOAuth?.lastError||"",lastSyncAt:fresh?.ghlOAuth?.lastSyncAt||"",needsAuthorization:false,status:publicAgencyStatus(fresh)});
