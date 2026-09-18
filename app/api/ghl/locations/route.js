@@ -19,7 +19,7 @@ export async function GET(req){
     const sess=await getSession();if(!sess||sess.role!=="agency_admin")return NextResponse.json({error:"Réservé à l’administration Presty"},{status:403});
     const state=await loadState(),status=publicAgencyStatus(state);
     if(!status.connected)return NextResponse.json({connected:false,locations:[],syncError:state?.ghlOAuth?.lastError||"",needsAuthorization:true,status});
-    const url=new URL(req.url),doSync=url.searchParams.get("sync")!=="0";
+    const url=new URL(req.url),doSync=url.searchParams.get("sync")==="1";
     let syncError="";
     if(doSync){try{await syncInstalledLocations(state,saveState)}catch(e){syncError=e.message||"";const freshErr=await loadState();freshErr.ghlOAuth={...(freshErr.ghlOAuth||{}),connected:true,lastError:syncError,updatedAt:new Date().toISOString()};await saveState(freshErr,{allowGhlOAuthWrite:true})}}
     const fresh=await loadState(),installs=oauthInstallations(fresh).filter(x=>x.locationId&&x.isInstalled!==false),locations=[];
