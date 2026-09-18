@@ -1,16 +1,18 @@
 import {NextResponse} from "next/server";
 import {getSession} from "@/lib/session";
 import {loadState,saveState} from "@/lib/db";
-import {getValidLocationToken,oauthInstallations,syncInstalledLocations,publicAgencyStatus} from "@/lib/ghl-oauth";
+import {oauthInstallations,syncInstalledLocations,publicAgencyStatus} from "@/lib/ghl-oauth";
 export const dynamic="force-dynamic";
-async function locationDetails(state,item){
-  try{
-    const token=await getValidLocationToken(state,item.locationId,saveState);
-    const r=await fetch(`https://services.leadconnectorhq.com/locations/${encodeURIComponent(item.locationId)}`,{headers:{Accept:"application/json",Authorization:`Bearer ${token}`,Version:"v3"},cache:"no-store"});
-    const b=await r.json().catch(()=>({})),loc=b?.location||b;
-    if(r.ok)return{id:item.locationId,name:loc?.name||loc?.companyName||item.locationName||item.locationId,address:[loc?.address,loc?.city].filter(Boolean).join(", "),companyId:item.companyId||"",userType:"Location"};
-  }catch{}
-  return{id:item.locationId,name:item.locationName||item.locationId,address:item.address||"",companyId:item.companyId||"",userType:"Location"};
+// V21.28: /oauth/installed-locations fournit déjà le nom et l’adresse.
+// Ne jamais générer de Location Token simplement pour afficher la liste admin.
+function locationDetails(item){
+  return {
+    id:item.locationId,
+    name:item.locationName||item.locationId,
+    address:item.address||"",
+    companyId:item.companyId||"",
+    userType:"Location"
+  };
 }
 export async function GET(req){
   try{
@@ -21,7 +23,7 @@ export async function GET(req){
     let syncError="";
     if(doSync){try{await syncInstalledLocations(state,saveState)}catch(e){syncError=e.message||"";const freshErr=await loadState();freshErr.ghlOAuth={...(freshErr.ghlOAuth||{}),connected:true,lastError:syncError,updatedAt:new Date().toISOString()};await saveState(freshErr)}}
     const fresh=await loadState(),installs=oauthInstallations(fresh).filter(x=>x.locationId&&x.isInstalled!==false),locations=[];
-    for(const item of installs)locations.push(await locationDetails(fresh,item));
+    for(const item of installs)locations.push(locationDetails(item));
     return NextResponse.json({connected:true,locations,syncError:syncError||fresh?.ghlOAuth?.lastError||"",lastSyncAt:fresh?.ghlOAuth?.lastSyncAt||"",needsAuthorization:false,status:publicAgencyStatus(fresh)});
   }catch(e){return NextResponse.json({error:e.message||"Impossible de charger les sous-comptes GHL"},{status:500})}
 }
