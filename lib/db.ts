@@ -1,5 +1,6 @@
 import { config, headers } from "./config";
 import { STATE_ID, emptyState, migrate } from "./state";
+import { mirrorChangedLeads } from "./crm-shadow";
 
 export async function loadState() {
   const { url } = config();
@@ -19,6 +20,7 @@ export async function saveState(state: unknown, options: { allowGhlOAuthWrite?: 
   // ancienne copie du token agence chargée quelques millisecondes auparavant.
   // Seul le flux OAuth explicite passe allowGhlOAuthWrite=true.
   let payload: any = migrate(state);
+  let previous: any = null;
   if (!options.allowGhlOAuthWrite) {
     try {
       const currentResponse = await fetch(
@@ -28,6 +30,7 @@ export async function saveState(state: unknown, options: { allowGhlOAuthWrite?: 
       if (currentResponse.ok) {
         const rows = await currentResponse.json();
         const current: any = migrate(rows?.[0]?.payload || emptyState());
+        previous = current;
         payload = { ...payload, ghlOAuth: current.ghlOAuth };
       }
     } catch {}
@@ -42,4 +45,11 @@ export async function saveState(state: unknown, options: { allowGhlOAuthWrite?: 
     }),
   });
   if (!response.ok) throw new Error(`Supabase: ${await response.text()}`);
+
+  // Shadow write is deliberately non-blocking: app_state remains authoritative in V21.37.
+  if (previous) {
+    try { await mirrorChangedLeads(previous, payload); } catch (error) {
+      console.error("[crm-shadow] mirror failed", error);
+    }
+  }
 }
