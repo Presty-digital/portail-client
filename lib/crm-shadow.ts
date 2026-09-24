@@ -10,40 +10,74 @@ function stable(value: unknown) {
   try { return JSON.stringify(value ?? null); } catch { return ""; }
 }
 
-function appointmentRow(lead: any) {
-  const at = String(lead?.rdvAt || "").trim();
-  if (!at) return null;
+function categoriesForLead(lead: any) {
+  const values = [
+    ...(Array.isArray(lead?.categories) ? lead.categories : []),
+    ...Object.keys(lead?.commercialByCategory || {}),
+    lead?.latestCategory,
+    lead?.category,
+  ].map((value) => String(value || "").trim()).filter(Boolean);
+  return [...new Set(values)];
+}
+
+function trackingForCategory(lead: any, category: string) {
+  const track = lead?.commercialByCategory?.[category] || {};
+  const isLegacy = category === String(lead?.latestCategory || lead?.category || "").trim();
   return {
-    id: `current:${lead.id}`,
-    contact_id: lead.id,
-    data: {
-      rdvAt: at,
-      rdvDuration: Number(lead?.rdvDuration || 60),
-      rdvType: lead?.rdvType || "",
-      statut: lead?.statut || "",
-      institutId: lead?.institutId || "",
-      updatedAt: lead?.updatedAt || new Date().toISOString(),
-    },
-    updated_at: new Date().toISOString(),
+    category,
+    status: track.status || track.statut || (isLegacy ? lead?.statut : "") || "",
+    rdvAt: track.rdvAt ?? (isLegacy ? lead?.rdvAt : "") ?? "",
+    rdvDuration: Number(track.rdvDuration || lead?.rdvDuration || 60),
+    rdvType: track.rdvType ?? (isLegacy ? lead?.rdvType : "") ?? "",
+    nextActionAt: track.nextActionAt ?? (isLegacy ? lead?.nextActionAt : "") ?? "",
+    nextActionType: track.nextActionType ?? (isLegacy ? lead?.nextActionType : "") ?? "",
+    comments: Array.isArray(track.comments) ? track.comments : (isLegacy && Array.isArray(lead?.comments) ? lead.comments : []),
+    updatedAt: track.updatedAt || lead?.updatedAt || new Date().toISOString(),
   };
 }
 
-function actionRow(lead: any) {
-  const at = String(lead?.nextActionAt || "").trim();
-  const type = String(lead?.nextActionType || "").trim();
-  if (!at && !type) return null;
-  return {
-    id: `current:${lead.id}`,
-    contact_id: lead.id,
-    data: {
-      nextActionAt: at,
-      nextActionType: type,
-      statut: lead?.statut || "",
-      institutId: lead?.institutId || "",
-      updatedAt: lead?.updatedAt || new Date().toISOString(),
-    },
-    updated_at: new Date().toISOString(),
-  };
+function appointmentRows(lead: any) {
+  return categoriesForLead(lead).map((category) => {
+    const track = trackingForCategory(lead, category);
+    const at = String(track.rdvAt || "").trim();
+    if (!at) return null;
+    return {
+      id: `current:${lead.id}:${category}`,
+      contact_id: lead.id,
+      data: {
+        category,
+        rdvAt: at,
+        rdvDuration: track.rdvDuration,
+        rdvType: track.rdvType,
+        statut: track.status,
+        institutId: lead?.institutId || "",
+        updatedAt: track.updatedAt,
+      },
+      updated_at: new Date().toISOString(),
+    };
+  }).filter(Boolean);
+}
+
+function actionRows(lead: any) {
+  return categoriesForLead(lead).map((category) => {
+    const track = trackingForCategory(lead, category);
+    const at = String(track.nextActionAt || "").trim();
+    const type = String(track.nextActionType || "").trim();
+    if (!at && !type) return null;
+    return {
+      id: `current:${lead.id}:${category}`,
+      contact_id: lead.id,
+      data: {
+        category,
+        nextActionAt: at,
+        nextActionType: type,
+        statut: track.status,
+        institutId: lead?.institutId || "",
+        updatedAt: track.updatedAt,
+      },
+      updated_at: new Date().toISOString(),
+    };
+  }).filter(Boolean);
 }
 
 async function upsert(table: string, rows: any[]) {
@@ -58,11 +92,11 @@ async function upsert(table: string, rows: any[]) {
   if (!response.ok) throw new Error(`${table}: ${await response.text()}`);
 }
 
-async function removeCurrent(table: string, ids: string[]) {
+async function removeForContacts(table: string, ids: string[]) {
   if (!ids.length) return;
   const { url } = config();
   for (const id of ids) {
-    const response = await fetch(`${url}/rest/v1/${table}?id=eq.${encodeURIComponent(`current:${id}`)}`, {
+    const response = await fetch(`${url}/rest/v1/${table}?contact_id=eq.${encodeURIComponent(id)}`, {
       method: "DELETE",
       headers: headers({ Prefer: "return=minimal" }),
       cache: "no-store",
@@ -71,7 +105,9 @@ async function removeCurrent(table: string, ids: string[]) {
   }
 }
 
-// V21.37 phase 1: shadow copy only. app_state remains the production source of truth.
+// Shadow copy only. app_state remains the production source of truth.
+// Commercial state is category-scoped in the CRM UI, so appointments/actions must
+// be projected from commercialByCategory rather than only from legacy root fields.
 // A shadow failure must never make a CRM save fail.
 export async function mirrorChangedLeads(previousState: any, nextState: any) {
   const before = new Map((previousState?.leads || []).map((lead: any) => [lead.id, lead]));
@@ -79,28 +115,23 @@ export async function mirrorChangedLeads(previousState: any, nextState: any) {
   if (!changed.length) return { mirrored: 0 };
 
   const now = new Date().toISOString();
-  await upsert("crm_contacts", changed.map((lead: any) => ({
-    id: lead.id,
-    data: lead,
-    updated_at: now,
-  })));
+  await upsert("crm_contacts", changed.map((lead: any) => ({ id: lead.id, data: lead, updated_at: now })));
 
-  const appointments = changed.map(appointmentRow).filter(Boolean);
-  const actions = changed.map(actionRow).filter(Boolean);
-  await upsert("crm_appointments", appointments as any[]);
-  await upsert("crm_actions", actions as any[]);
-
-  const noAppointment = changed.filter((lead: any) => !appointmentRow(lead)).map((lead: any) => lead.id);
-  const noAction = changed.filter((lead: any) => !actionRow(lead)).map((lead: any) => lead.id);
-  await removeCurrent("crm_appointments", noAppointment);
-  await removeCurrent("crm_actions", noAction);
+  const ids = changed.map((lead: any) => lead.id);
+  await removeForContacts("crm_appointments", ids);
+  await removeForContacts("crm_actions", ids);
+  await upsert("crm_appointments", changed.flatMap(appointmentRows) as any[]);
+  await upsert("crm_actions", changed.flatMap(actionRows) as any[]);
   return { mirrored: changed.length };
 }
 
 export async function backfillLeadBatch(leads: any[]) {
   const now = new Date().toISOString();
+  const ids = leads.map((lead: any) => lead.id);
   await upsert("crm_contacts", leads.map((lead: any) => ({ id: lead.id, data: lead, updated_at: now })));
-  await upsert("crm_appointments", leads.map(appointmentRow).filter(Boolean) as any[]);
-  await upsert("crm_actions", leads.map(actionRow).filter(Boolean) as any[]);
+  await removeForContacts("crm_appointments", ids);
+  await removeForContacts("crm_actions", ids);
+  await upsert("crm_appointments", leads.flatMap(appointmentRows) as any[]);
+  await upsert("crm_actions", leads.flatMap(actionRows) as any[]);
   return { mirrored: leads.length };
 }
