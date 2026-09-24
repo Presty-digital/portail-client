@@ -38,5 +38,34 @@ export async function GET(req){
 
 export async function POST(req){
   if(!await admin())return NextResponse.json({error:"Accès refusé"},{status:403});
-  try{const body=await req.json().catch(()=>({}));const offset=Math.max(0,Number(body.offset)||0);const limit=Math.min(100,Math.max(10,Number(body.limit)||50));const state=await loadState();const leads=Array.isArray(state.leads)?state.leads:[];const batch=leads.slice(offset,offset+limit);if(batch.length)await backfillLeadBatch(batch);const nextOffset=offset+batch.length;return NextResponse.json({ok:true,total:leads.length,processed:batch.length,offset,nextOffset,done:nextOffset>=leads.length})}catch(e){return NextResponse.json({error:e?.message||"Backfill impossible"},{status:500})}
+  try{
+    const body=await req.json().catch(()=>({}));
+    const limit=Math.min(100,Math.max(10,Number(body.limit)||50));
+    const state=await loadState();
+    const leads=Array.isArray(state.leads)?state.leads:[];
+
+    // HOT mode: never rely on an array offset. The CRM is live and leads may be
+    // appended/edited while migration is running. Each pass compares the current
+    // authoritative lead with its shadow copy and only repairs missing/stale rows.
+    if(body.mode==="catchup"){
+      const contacts=await allRows("crm_contacts","id,data");
+      const shadow=new Map(contacts.map(r=>[String(r.id),r.data]));
+      const pending=leads.filter(lead=>!shadow.has(String(lead.id))||stable(lead)!==stable(shadow.get(String(lead.id))));
+      const batch=pending.slice(0,limit);
+      if(batch.length)await backfillLeadBatch(batch);
+      return NextResponse.json({
+        ok:true,mode:"catchup",sourceLeads:leads.length,processed:batch.length,
+        pendingAtStart:pending.length,remainingAtSnapshot:Math.max(0,pending.length-batch.length),
+        doneForSnapshot:pending.length<=batch.length,
+        message:"Relancer catchup jusqu'à remainingAtSnapshot=0, puis lancer l'audit complet. Les nouveaux leads restent pris en charge au passage suivant."
+      });
+    }
+
+    // Legacy offset mode kept for compatibility, but catchup is required for a live CRM.
+    const offset=Math.max(0,Number(body.offset)||0);
+    const batch=leads.slice(offset,offset+limit);
+    if(batch.length)await backfillLeadBatch(batch);
+    const nextOffset=offset+batch.length;
+    return NextResponse.json({ok:true,total:leads.length,processed:batch.length,offset,nextOffset,done:nextOffset>=leads.length,warning:"CRM live: utiliser mode=catchup pour la migration complète."});
+  }catch(e){return NextResponse.json({error:e?.message||"Backfill impossible"},{status:500})}
 }
