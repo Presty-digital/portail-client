@@ -95,8 +95,12 @@ async function upsert(table: string, rows: any[]) {
 async function removeForContacts(table: string, ids: string[]) {
   if (!ids.length) return;
   const { url } = config();
-  for (const id of ids) {
-    const response = await fetch(`${url}/rest/v1/${table}?contact_id=eq.${encodeURIComponent(id)}`, {
+  // Bulk deletion avoids one HTTP request per contact during shadow/backfill.
+  // Keep chunks modest so URLs remain well below proxy limits.
+  const chunkSize = 75;
+  for (let i = 0; i < ids.length; i += chunkSize) {
+    const chunk = ids.slice(i, i + chunkSize).map((id) => `"${String(id).replace(/"/g, "")}"`).join(",");
+    const response = await fetch(`${url}/rest/v1/${table}?contact_id=in.(${encodeURIComponent(chunk)})`, {
       method: "DELETE",
       headers: headers({ Prefer: "return=minimal" }),
       cache: "no-store",
