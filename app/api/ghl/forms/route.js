@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {getSession,allowedIds} from "@/lib/session";
-import {loadState,saveState} from "@/lib/db";
+import {loadState,saveState,loadStateVersioned,saveStateIfUnchanged} from "@/lib/db";
 import {getValidLocationToken,exchangeLocationToken,persistLocationToken} from "@/lib/ghl-oauth";
 export const dynamic="force-dynamic";
 
@@ -42,4 +42,26 @@ export async function GET(req){
   const unique=[...new Map(forms.map(f=>[f.id,f])).values()];
   return NextResponse.json({forms:unique,locationId:integration.locationId});
  }catch(e){return NextResponse.json({error:String(e?.message||e||"Erreur de synchronisation GHL")},{status:500})}
+}
+
+
+export async function POST(req){
+ try{
+  const sess=await getSession();if(!sess)return NextResponse.json({error:"Non autorisé"},{status:401});
+  const body=await req.json().catch(()=>({}));const institutId=String(body?.institutId||"");
+  if(!institutId||!canAccess(sess,institutId))return NextResponse.json({error:"Accès refusé"},{status:403});
+  const incoming=Array.isArray(body?.forms)?body.forms:[];
+  const forms=incoming.slice(0,500).map(f=>({formId:String(f?.formId||f?.id||"").trim(),formName:String(f?.formName||f?.name||"Formulaire GHL").trim().slice(0,300),category:String(f?.category||"Autres").trim().slice(0,120)})).filter(f=>f.formId);
+  for(let attempt=1;attempt<=5;attempt++){
+   const snap=await loadStateVersioned();
+   const integrations=Array.isArray(snap.state?.integrations)?snap.state.integrations:[];
+   const index=integrations.findIndex(x=>x?.institutId===institutId&&x?.provider==="ghl");
+   if(index<0)return NextResponse.json({error:"Intégration GoHighLevel introuvable pour ce compte"},{status:404});
+   const nextIntegrations=[...integrations];nextIntegrations[index]={...nextIntegrations[index],forms,updatedAt:new Date().toISOString()};
+   const next={...snap.state,integrations:nextIntegrations};
+   if(await saveStateIfUnchanged(next,snap.updatedAt,snap.previous))return NextResponse.json({ok:true,forms});
+   await new Promise(r=>setTimeout(r,25*attempt));
+  }
+  return NextResponse.json({error:"Conflit de synchronisation, veuillez réessayer"},{status:409});
+ }catch(e){return NextResponse.json({error:String(e?.message||e||"Erreur d’enregistrement des formulaires GHL")},{status:500})}
 }
